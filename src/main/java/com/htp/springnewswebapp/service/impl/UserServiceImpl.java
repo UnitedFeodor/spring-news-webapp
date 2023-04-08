@@ -6,15 +6,12 @@ import com.htp.springnewswebapp.entity.User;
 import com.htp.springnewswebapp.service.ServiceException;
 import com.htp.springnewswebapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserServiceImpl implements UserService {
-
-	public static final String ROLE_ADMIN = "admin";
-	public static final String ROLE_USER = "user";
-	public static final String ROLE_GUEST = "guest";
-
 	@Autowired
-	private final UserDAO userDAO;
+	private  UserDAO userDAO;
 
 	@Override
 	public User signIn(String login, String password) throws ServiceException {

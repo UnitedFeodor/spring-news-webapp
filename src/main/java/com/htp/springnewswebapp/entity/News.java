@@ -1,8 +1,8 @@
 package com.htp.springnewswebapp.entity;
 
-import jakarta.persistence.*;
 import lombok.Data;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 @Data
 @Entity

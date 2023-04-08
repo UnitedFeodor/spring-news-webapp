@@ -29,8 +29,7 @@
                 <c:out value="${news.title}" />
             </div>
             <div class="news-date">
-                <tags:localDate date="${news.newsDate}"/>
-                    <%-- <c:out value="${news.newsDate}" /> --%>
+                <tags:localDate date="${news.dateAdded}"/>
             </div>
 
             <div class="news-content">
@@ -39,13 +38,13 @@
             <div class="news-link-to-wrapper">
                 <div class="link-position">
                     <c:if test="${sessionScope.role eq 'admin'}">
-                        <a href="controller?command=go_to_edit_news&idNews=${news.idNews}">${edit} </a>
+                        <a href="controller?command=go_to_edit_news&idNews=${news.id}">${edit} </a>
                     </c:if>
                     <span>&nbsp&nbsp</span>
-                    <a href="controller?command=go_to_view_news&idNews=${news.idNews}">${newslist_view} </a>
+                    <a href="controller?command=go_to_view_news&idNews=${news.id}">${newslist_view} </a>
 
                     <c:if test="${sessionScope.role eq 'admin'}">
-                        <input type="checkbox" name="idNews" value="${news.idNews }" />
+                        <input type="checkbox" name="idNews" value="${news.id }" />
                     </c:if>
                 </div>
             </div>

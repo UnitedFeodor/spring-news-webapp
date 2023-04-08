@@ -9,13 +9,11 @@ public interface NewsService {
 
   void delete(int[] newsIds) throws ServiceException;
   void add(News news) throws ServiceException;
-
-  void find() throws ServiceException;
   void update(News news) throws ServiceException;
   
   List<News> getCountNewsStartingFrom(int count, int from)  throws ServiceException;
 
   int getTotalNewsAmount() throws ServiceException;
-  List<News> list()  throws ServiceException;
+  List<News> getAllNews()  throws ServiceException;
   News findById(int id) throws ServiceException;
 }

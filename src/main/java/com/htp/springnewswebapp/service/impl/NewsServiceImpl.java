@@ -8,14 +8,16 @@ import com.htp.springnewswebapp.service.NewsService;
 import com.htp.springnewswebapp.service.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 public class NewsServiceImpl implements NewsService {
 	@Autowired
-	private final NewsDAO newsDAO ;
+	private NewsDAO newsDAO;
 
+	@Transactional
 	@Override
 	public void delete(int[] newsIds) throws ServiceException {
 		News news = new News();
@@ -29,7 +31,7 @@ public class NewsServiceImpl implements NewsService {
 			throw new ServiceException(e);
 		}
 	}
-
+	@Transactional
 	@Override
 	public void add(News news) throws ServiceException {
 		try {
@@ -39,7 +41,7 @@ public class NewsServiceImpl implements NewsService {
 		}
 
 	}
-
+	@Transactional
 	@Override
 	public int getTotalNewsAmount() throws ServiceException {
 		try {
@@ -48,12 +50,7 @@ public class NewsServiceImpl implements NewsService {
 			throw new ServiceException(e);
 		}
 	}
-
-	@Override
-	public void find()  throws ServiceException{
-		// TODO Auto-generated method stub
-	}
-
+	@Transactional
 	@Override
 	public void update(News news)  throws ServiceException{
 		try {
@@ -63,7 +60,7 @@ public class NewsServiceImpl implements NewsService {
 		}
 		
 	}
-
+	@Transactional
 	@Override
 	public List<News> getCountNewsStartingFrom(int count, int from) throws ServiceException {
 		if (count <= 0) {
@@ -79,22 +76,22 @@ public class NewsServiceImpl implements NewsService {
 			throw new ServiceException(e);
 		}
 	}
-
+	@Transactional
 	@Override
-	public List<News> list() throws ServiceException {
+	public List<News> getAllNews() throws ServiceException {
 		try {
-			return newsDAO.getList();
+			return newsDAO.getAllNews();
 		} catch (DaoException e) {
 			throw new ServiceException(e);
 		}
 	}
-
+	@Transactional
 	@Override
 	public News findById(int id) throws ServiceException {
 		News news = new News();
 		news.setId(id);
 		try {
-			return newsDAO.fetchById(id);
+			return newsDAO.findById(id);
 		} catch (DaoException e) {
 			throw new ServiceException(e);
 		}
