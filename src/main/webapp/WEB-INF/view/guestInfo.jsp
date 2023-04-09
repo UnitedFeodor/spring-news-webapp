@@ -1,5 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ include file="/WEB-INF/pages/tiles/localization/localizationBase.jsp" %>
+<%@ include file="/WEB-INF/view/localization/localizationBase.jsp" %>
 
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 ${guestinfo_head}
@@ -16,7 +16,7 @@ ${guestinfo_head}
 					<c:out value="${news.title}" />
 				</div>
 				<div class="news-date">
-					<tags:localDate date="${news.newsDate}"/>
+					<tags:localDate date="${news.dateAdded}"/>
 					<%--%><c:out value="${news.newsDate}" /> --%>
 				</div>
 

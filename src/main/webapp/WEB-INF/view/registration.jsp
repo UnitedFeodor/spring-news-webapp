@@ -1,5 +1,5 @@
 
-<%@ include file="/WEB-INF/pages/tiles/localization/localizationBase.jsp" %>
+<%@ include file="/WEB-INF/view/localization/localizationBase.jsp" %>
 <html>
 <head>
     <title></title>

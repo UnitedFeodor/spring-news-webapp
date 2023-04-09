@@ -27,10 +27,9 @@ public class FrontController {
                 request.setAttribute(JSP_NEWS, latestNews);
             }
 
-            return "home";
+            return "baseLayout";
         } catch (ServiceException e) {
-
-            return "home";
+            return "error";
         }
 
 

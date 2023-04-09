@@ -1,5 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ include file="/WEB-INF/pages/tiles/localization/localizationBase.jsp" %>
+<%@ include file="/WEB-INF/view/localization/localizationBase.jsp" %>
 
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 <div class="body-title">
@@ -19,7 +19,7 @@
 			<td class="space_around_title_text">${date}</td>
 
 			<td class="space_around_view_text"><div class="word-breaker">
-				<tags:localDate date="${news.newsDate}"/>
+				<tags:localDate date="${news.dateAdded}"/>
 				</div></td>
 		</tr>
 		<tr>
@@ -42,7 +42,7 @@
 	<div style="margin-left: 30px; margin-bottom: 10px">
 		<form action="controller" method="post">
 			<input type="hidden" name="command" value="go_to_edit_news" />
-			<input type="hidden" name="idNews" value="${news.idNews}" />
+			<input type="hidden" name="idNews" value="${news.id}" />
 			<input type="submit" value="${edit}" />
 		</form>
 	</div>
@@ -50,7 +50,7 @@
 	<div style="margin-left: 30px" >
 		<form action="controller" method="post">
 			<input type="hidden" name="command" value="do_delete_news" />
-			<input type="hidden" name="idNews" value="${news.idNews}" />
+			<input type="hidden" name="idNews" value="${news.id}" />
 			<input type="submit" value="${delete}" />
 		</form>
 	</div>

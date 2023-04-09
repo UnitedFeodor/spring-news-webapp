@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<%@ include file="/WEB-INF/pages/tiles/localization/localizationBase.jsp" %>
+<%@ include file="/WEB-INF/view/localization/localizationBase.jsp" %>
 <%--
 <fmt:setLocale value="sessionScope.local"/>
 <fmt:setBundle basename="localization" var="loc1"/>

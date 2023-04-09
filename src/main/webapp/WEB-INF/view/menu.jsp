@@ -1,5 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ include file="/WEB-INF/pages/tiles/localization/localizationBase.jsp" %>
+<%@ include file="/WEB-INF/view/localization/localizationBase.jsp" %>
 
 <div class="menu-wrapper">
 	<div class="menu-title-wrapper">
