@@ -20,7 +20,7 @@
 
 </title>
 
-<link rel="stylesheet" type="text/css" href="styles/newsStyleBroken.css">
+<link rel="stylesheet" type="text/css" href="../../static/css/newsStyleBroken.css">
 	<style>
 		.header {
 			background: -webkit-linear-gradient(top left,cornflowerblue,lightskyblue )

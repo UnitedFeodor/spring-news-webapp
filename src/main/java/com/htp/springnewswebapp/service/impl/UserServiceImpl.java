@@ -10,8 +10,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService {
-	@Autowired
 	private  UserDAO userDAO;
+	@Autowired
+	public UserServiceImpl(UserDAO userDAO) {
+		this.userDAO = userDAO;
+	}
 
 	@Override
 	public User signIn(String login, String password) throws ServiceException {

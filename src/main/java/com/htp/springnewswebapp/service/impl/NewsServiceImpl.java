@@ -14,8 +14,13 @@ import java.util.List;
 
 @Service
 public class NewsServiceImpl implements NewsService {
-	@Autowired
+
 	private NewsDAO newsDAO;
+
+	@Autowired
+	public NewsServiceImpl(NewsDAO newsDAO) {
+		this.newsDAO = newsDAO;
+	}
 
 	@Transactional
 	@Override

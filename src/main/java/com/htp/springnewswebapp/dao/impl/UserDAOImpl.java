@@ -11,8 +11,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class UserDAOImpl implements UserDAO {
 
-	@Autowired
+
 	private SessionFactory sessionFactory;
+	@Autowired
+	public UserDAOImpl(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+
 	@Override
 	public boolean signIn(String login, String password) throws DaoException {
 		return false;

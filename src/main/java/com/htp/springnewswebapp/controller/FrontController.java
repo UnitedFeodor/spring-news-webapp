@@ -15,8 +15,12 @@ import java.util.List;
 public class FrontController {
 
     private static final String JSP_NEWS = "news";
-    @Autowired
+
     private NewsService newsService;
+    @Autowired
+    public FrontController(NewsService newsService) {
+        this.newsService = newsService;
+    }
 
     @RequestMapping("/home")
     public String goToHomePage(HttpServletRequest request, HttpServletResponse response) {

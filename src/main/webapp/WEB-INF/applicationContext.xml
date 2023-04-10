@@ -19,6 +19,8 @@
     <!-- Add support for conversion, formatting and validation support -->
     <mvc:annotation-driven/>
 
+    <mvc:resources mapping="/static/**" location="/static/" />
+
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/view/" />
         <property name="suffix" value=".jsp" />
@@ -62,6 +64,7 @@
 
     <!-- Enable configuration of transactional behavior based on annotations -->
     <tx:annotation-driven transaction-manager="transactionManager" />
+
 
 
 </beans>
