@@ -17,20 +17,9 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User signIn(String login, String password) throws ServiceException {
-		
-
-		User userToValidate = new User();
-		userToValidate.setLogin(login);
-		userToValidate.setPassword(password);
-
+	public User signIn(User user) throws ServiceException {
 		try {
-			if(userDAO.signIn(login, password)) {
-				return userDAO.getUserByLogin(login);
-			} else {
-				return null;
-			}
-			
+			return (userDAO.signIn(user));
 		} catch(DaoException e) {
 			throw new ServiceException(e);
 		}
@@ -40,14 +29,16 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public int getIdByLogin(String login) throws ServiceException {
-		User userToValidate = new User();
-		userToValidate.setLogin(login);
-
-		try {
-			return userDAO.getIdByLogin(login);
-		} catch (DaoException e) {
-			throw new ServiceException(e);
-		}
+		// TODO change
+//		User userToValidate = new User();
+//		userToValidate.setLogin(login);
+//
+//		try {
+//			return userDAO.getIdByLogin(login);
+//		} catch (DaoException e) {
+//			throw new ServiceException(e);
+//		}
+		return 0;
 	}
 
 	@Override

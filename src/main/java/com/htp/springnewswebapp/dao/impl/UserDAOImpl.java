@@ -4,9 +4,15 @@ package com.htp.springnewswebapp.dao.impl;
 import com.htp.springnewswebapp.dao.DaoException;
 import com.htp.springnewswebapp.dao.UserDAO;
 import com.htp.springnewswebapp.entity.User;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public class UserDAOImpl implements UserDAO {
@@ -19,29 +25,42 @@ public class UserDAOImpl implements UserDAO {
 	}
 
 	@Override
-	public boolean signIn(String login, String password) throws DaoException {
-		return false;
+	public User signIn(User user) throws DaoException {
+		try {
+			Session session = sessionFactory.getCurrentSession();
+			Query<User> query = session.createQuery("FROM User WHERE login = :login AND password = :password", User.class);
+			query.setParameter("login", user.getLogin());
+			query.setParameter("password", user.getPassword());
+			User user = query.uniqueResult();
+			return user;
+		} catch (HibernateException e) {
+			throw new DaoException(e);
+		}
 	}
 
 	@Override
 	public boolean signUp(User user) throws DaoException {
-		return false;
+		try {
+			Session session = sessionFactory.getCurrentSession();
+
+			// Check for existing username
+			Query<User> query = session.createQuery("from User where login=:login", User.class);
+			query.setParameter("login", user.getLogin());
+			List<User> users = query.getResultList();
+			if (!users.isEmpty()) {
+				return false;
+			}
+			String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+			user.setPassword(hashedPassword);
+
+			session.save(user);
+			return true;
+		} catch (HibernateException e) {
+			throw new DaoException(e);
+		}
 	}
 
-	@Override
-	public String getRole(String login, String password) throws DaoException {
-		return null;
-	}
 
-	@Override
-	public int getIdByLogin(String login) throws DaoException {
-		return 0;
-	}
-
-	@Override
-	public User getUserByLogin(String login) throws DaoException {
-		return null;
-	}
 }
 
 
