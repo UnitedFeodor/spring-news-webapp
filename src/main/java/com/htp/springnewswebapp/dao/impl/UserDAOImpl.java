@@ -28,11 +28,15 @@ public class UserDAOImpl implements UserDAO {
 	public User signIn(User user) throws DaoException {
 		try {
 			Session session = sessionFactory.getCurrentSession();
-			Query<User> query = session.createQuery("FROM User WHERE login = :login AND password = :password", User.class);
+			Query<User> query = session.createQuery("FROM User WHERE login = :login", User.class);
 			query.setParameter("login", user.getLogin());
-			query.setParameter("password", user.getPassword());
-			User user = query.uniqueResult();
-			return user;
+
+			User foundUser = query.uniqueResult();
+			if (foundUser != null && BCrypt.checkpw(user.getPassword(),foundUser.getPassword())) {
+				return foundUser;
+			} else {
+				return null;
+			}
 		} catch (HibernateException e) {
 			throw new DaoException(e);
 		}

@@ -3,10 +3,12 @@ package com.htp.springnewswebapp.service.impl;
 import com.htp.springnewswebapp.dao.DaoException;
 import com.htp.springnewswebapp.dao.UserDAO;
 import com.htp.springnewswebapp.entity.User;
+import com.htp.springnewswebapp.entity.UserStatus;
 import com.htp.springnewswebapp.service.ServiceException;
 import com.htp.springnewswebapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -16,6 +18,7 @@ public class UserServiceImpl implements UserService {
 		this.userDAO = userDAO;
 	}
 
+	@Transactional
 	@Override
 	public User signIn(User user) throws ServiceException {
 		try {
@@ -26,7 +29,7 @@ public class UserServiceImpl implements UserService {
 		
 	}
 
-
+	@Transactional
 	@Override
 	public int getIdByLogin(String login) throws ServiceException {
 		// TODO change
@@ -41,9 +44,15 @@ public class UserServiceImpl implements UserService {
 		return 0;
 	}
 
+	@Transactional
 	@Override
 	public boolean signUp(User user)  throws ServiceException {
 		try {
+			final int DB_ON_REGISTER_USER_STATUS_ID = 2; // 'active'
+			UserStatus userStatus = new UserStatus();
+			userStatus.setId(DB_ON_REGISTER_USER_STATUS_ID);
+			user.setStatus(userStatus);
+
 			return userDAO.signUp(user);
 
 		} catch(DaoException e) {

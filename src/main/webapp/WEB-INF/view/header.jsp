@@ -37,8 +37,7 @@
 		<c:if test="${not (sessionScope.userActivity eq 'active')}">
 
 			<div align="right">
-				<form action="controller" method="post">
-					<input type="hidden" name="command" value="do_sign_in"/>
+				<form action="signin" method="post">
 					${header_logination_login} <input type="text" name="login" value="" /><br />
 					${header_logination_password} <input type="password" name="password" value="" /><br />
 
@@ -63,7 +62,7 @@
 						</font>
 					</c:if>
 
-					<a href="controller?command=go_to_registration_page">${header_registration_link}</a> <input type="submit" value="${header_signin}" /><br />
+					<a href="signup">${header_registration_link}</a> <input type="submit" value="${header_signin}" /><br />
 				</form>
 			</div>
 

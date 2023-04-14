@@ -2,6 +2,7 @@
 <%@ include file="/WEB-INF/view/localization/localizationBase.jsp" %>
 
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 ${guestinfo_head}
 
 <div class="body-title">
@@ -9,7 +10,7 @@ ${guestinfo_head}
 </div>
 
 <form action="controller" method="post">
-	<c:forEach var="news" items="${requestScope.news}">
+	<c:forEach var="news" items="${news}">
 		<div class="single-news-wrapper">
 			<div class="single-news-header-wrapper">
 				<div class="news-title">
@@ -29,7 +30,7 @@ ${guestinfo_head}
 	</c:forEach>
 
 	<div class="no-news">
-		<c:if test="${requestScope.news eq null}">
+		<c:if test="${news eq null}">
 			${nonews}
 		</c:if>
 	</div>
