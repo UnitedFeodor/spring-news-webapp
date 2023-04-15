@@ -12,13 +12,13 @@
 		<div class="list-menu-wrapper" style="float: right;">
 			<ul style="text-align: left;">
 				<li style="padding-left: 15px;">
-					<a href="newslist">${list_news}</a><br />
+					<a href="/news/newslist">${list_news}</a><br />
 				</li>
 
 				<c:if test="${sessionScope.role eq 'admin'}">
 					<li style="padding-left: 15px;">
 				
-				    <a href="add">${list_add}</a>
+				    <a href="/news/add">${list_add}</a>
                 
                    <br />
 					

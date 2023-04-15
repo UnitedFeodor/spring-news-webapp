@@ -200,4 +200,50 @@ public class FrontController {
             return "error";
         }
     }
+
+    @RequestMapping(value = "/edit/{id}",method = RequestMethod.GET)
+    public String goToEditNews(
+            @PathVariable int id,
+            HttpServletRequest request,
+            Model model) {
+        try {
+            News news  = newsService.findById(id);
+            model.addAttribute(JSPConstants.NEWS, news);
+            request.setAttribute(JSPConstants.PRESENTATION, JSPConstants.EDIT_NEWS);
+
+            return "baseLayout";
+
+        } catch (ServiceException e) {
+            HttpSession session = request.getSession(false);
+            session.setAttribute(JSPConstants.ERROR_MESSAGE, "cannot find the news by id");
+            return "error";
+        }
+    }
+
+    @RequestMapping(value = "/edit/{id}",method = RequestMethod.POST)
+    public String editNews() {
+
+    }
+
+    @RequestMapping(value = "/add",method = RequestMethod.GET)
+    public String goToAddNews(HttpServletRequest request, Model model) {
+        request.setAttribute(JSPConstants.PRESENTATION, JSPConstants.EDIT_NEWS);
+        return "baseLayout";
+
+    }
+
+    @RequestMapping(value = "/add",method = RequestMethod.POST)
+    public String addNews() {
+
+    }
+
+    @RequestMapping(value = "/delete/{id}",method = RequestMethod.POST)
+    public String deleteNewsPiece() {
+
+    }
+
+    @RequestMapping(value = "/deletenews",method = RequestMethod.POST)
+    public String deleteSeveralNews() {
+
+    }
 }

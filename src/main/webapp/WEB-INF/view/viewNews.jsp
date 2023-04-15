@@ -3,7 +3,7 @@
 
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 <div class="body-title">
-	<a href="/newslist">${goback_news}</a> ${viewnews_goback_current}
+	<a href="/news/newslist">${goback_news}</a> ${viewnews_goback_current}
 </div>
 
 <div class="add-table-margin">
@@ -40,13 +40,13 @@
 
 <c:if test="${sessionScope.role eq 'admin'}">
 	<div style="margin-left: 30px; margin-bottom: 10px">
-		<form action="edit/${news.id}" method="post">
+		<form action="/news/edit/${news.id}" method="get">
 			<input type="submit" value="${edit}" />
 		</form>
 	</div>
 
 	<div style="margin-left: 30px" >
-		<form action="delete/${news.id}" method="post">
+		<form action="/news/delete/${news.id}" method="post">
 			<input type="submit" value="${delete}" />
 		</form>
 	</div>
