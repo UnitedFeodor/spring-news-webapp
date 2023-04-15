@@ -10,10 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,10 +38,18 @@ public class FrontController {
         user.setStatus(new UserStatus());
         user.setUserDetails(new UserDetails());
         user.setRole(new Role());
-
-
+        UserDetails userDetails = user.getUserDetails();
+        userDetails.setUser(user);
 
         return user;
+    }
+
+    @ModelAttribute("news")
+    private News insertNewsInModel() {
+        News news = new News();
+        news.setStatus(new NewsStatus());
+        news.setAuthor(new User());
+        return news;
     }
 
     @RequestMapping("/home")
@@ -65,8 +70,6 @@ public class FrontController {
 
     @RequestMapping(value = "/signup", method = RequestMethod.GET)
     public String goToRegistrationPage(HttpServletRequest request, Model model) {
-//        User user = new User();
-//        model.addAttribute("user",user);
         request.setAttribute(JSPConstants.PRESENTATION, JSPConstants.REGISTRATION);
         return "baseLayout";
     }
@@ -83,7 +86,7 @@ public class FrontController {
     }
 
     @RequestMapping(value = "/signout", method = RequestMethod.POST)
-    public String signUp(HttpServletRequest request) {
+    public String signOut(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
 
         session.setAttribute(UserConstants.USER_ACTIVITY, UserConstants.USER_STATUS_NOT_ACTIVE);
@@ -93,7 +96,6 @@ public class FrontController {
 
 
     }
-
 
     @RequestMapping(value = "/signin", method = RequestMethod.POST)
     public String signIn(HttpServletRequest request) {
@@ -112,7 +114,7 @@ public class FrontController {
 
             if (user != null) {
                 session.setAttribute(UserConstants.USER_ACTIVITY, UserConstants.USER_STATUS_ACTIVE);
-                session.setAttribute(UserConstants.USER_ROLE, user.getRole());
+                session.setAttribute(UserConstants.USER_ROLE, user.getRole().getTitle());
                 session.setAttribute(UserConstants.USER_ID,user.getId());
 
                 request.setAttribute(JSPConstants.PRESENTATION, JSPConstants.NEWS_LIST);
@@ -132,7 +134,6 @@ public class FrontController {
     private final String JSP_COUNT_PARAM = "count";
     private final String JSP_PAGE_NUMBER_PARAM = "page";
     private final String JSP_FINAL_PAGE_NUMBER = "final_page_number";
-    private final int DEFAULT_COUNT = 5;
     private final int DEFAULT_PAGE = 1;
     private final String DEFAULT_PAGE_STRING = "1";
     private final String DEFAULT_COUNT_STRING = "5";
@@ -146,44 +147,17 @@ public class FrontController {
 
         List<News> newsList;
         try {
-
-            int newsPage;
-//            pageParam = request.getParameter(JSP_PAGE_NUMBER_PARAM);
-//            if (pageParam == null) {
-//                newsPage = DEFAULT_PAGE;
-//            } else {
-                newsPage = Integer.parseInt(pageParam);
-//            }
-
-            //String sessionCountParam = (String) request.getSession(false).getAttribute(JSP_COUNT_PARAM);
-//            countParam = request.getParameter(JSP_COUNT_PARAM);
-            int newsCount;
-//            if (countParam == null) {
-
-//                if (sessionCountParam == null) {
-                    newsCount = Integer.parseInt(countParam);
-//                } else {
-//                    newsCount = Integer.parseInt(sessionCountParam);
-//                }
-
-//            } else {
-//                newsCount = Integer.parseInt(countParam);
-//            }
-
-//            if (countParam != null && sessionCountParam != null && !countParam.equals(sessionCountParam)) {
-//                newsPage = DEFAULT_PAGE;
-//            }
+            int newsPage = Integer.parseInt(pageParam);
+            int newsCount = Integer.parseInt(countParam);
             int totalNewsAmount = newsService.getTotalNewsAmount();
 
             if (totalNewsAmount < newsCount*newsPage) {
                 newsPage = DEFAULT_PAGE;
             }
 
-
             newsList = newsService.getCountNewsStartingFrom(newsCount,newsPage-1);
             if (newsList.size() > 0) {
                 model.addAttribute(JSP_NEWS, newsList);
-//                request.setAttribute(JSPConstants.NEWS, newsList);
             }
 
             int finalPageNumber = totalNewsAmount % newsCount == 0 ? totalNewsAmount / newsCount : totalNewsAmount / newsCount + 1;
@@ -191,12 +165,10 @@ public class FrontController {
             request.setAttribute(JSP_FINAL_PAGE_NUMBER,finalPageNumber);
             request.setAttribute(JSP_PAGE_NUMBER_PARAM, newsPage);
             request.setAttribute(JSP_COUNT_PARAM, countParam);
-//            request.getSession(false).setAttribute(JSP_COUNT_PARAM,String.valueOf(newsCount));
 
             request.setAttribute(JSPConstants.PRESENTATION, JSPConstants.NEWS_LIST);
 
             return "baseLayout";
-
 
         } catch (ServiceException e) {
             HttpSession session = request.getSession(false);
@@ -208,5 +180,24 @@ public class FrontController {
             return "error";
         }
 
+    }
+
+    @RequestMapping(value = "/view/{id}",method = RequestMethod.GET)
+    public String goToViewNews(
+            @PathVariable int id,
+            HttpServletRequest request,
+            Model model) {
+        try {
+            News news  = newsService.findById(id);
+            model.addAttribute(JSPConstants.NEWS, news);
+            request.setAttribute(JSPConstants.PRESENTATION, JSPConstants.VIEW_NEWS);
+
+            return "baseLayout";
+
+        } catch (ServiceException e) {
+            HttpSession session = request.getSession(false);
+            session.setAttribute(JSPConstants.ERROR_MESSAGE,"cannot find the news by id");
+            return "error";
+        }
     }
 }

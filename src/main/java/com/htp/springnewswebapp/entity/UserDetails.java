@@ -1,6 +1,7 @@
 package com.htp.springnewswebapp.entity;
 
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -25,5 +26,6 @@ public class UserDetails {
     @OneToOne
     @MapsId
     @JoinColumn(name = "users_id")
+    @ToString.Exclude
     private User user;
 }

@@ -3,6 +3,7 @@ package com.htp.springnewswebapp.service.impl;
 import com.htp.springnewswebapp.dao.DaoException;
 import com.htp.springnewswebapp.dao.UserDAO;
 import com.htp.springnewswebapp.entity.User;
+import com.htp.springnewswebapp.entity.UserDetails;
 import com.htp.springnewswebapp.entity.UserStatus;
 import com.htp.springnewswebapp.service.ServiceException;
 import com.htp.springnewswebapp.service.UserService;
@@ -52,6 +53,7 @@ public class UserServiceImpl implements UserService {
 			UserStatus userStatus = new UserStatus();
 			userStatus.setId(DB_ON_REGISTER_USER_STATUS_ID);
 			user.setStatus(userStatus);
+
 
 			return userDAO.signUp(user);
 

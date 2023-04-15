@@ -9,7 +9,7 @@
 	<a href="newslist">${goback_news} </a> ${newslist_goback_current}
 </div>
 
-<form:form action="deletenews" method="post">
+<form action="deletenews" method="post">
 	<c:forEach var="news" items="${news}">
 		<div class="single-news-wrapper">
 			<div class="single-news-header-wrapper">
@@ -18,7 +18,6 @@
 				</div>
 				<div class="news-date">
 					<tags:localDate date="${news.dateAdded}"/>
-					<%-- <c:out value="${news.dateAdded}" /> --%>
 				</div>
 
 				<div class="news-content">
@@ -27,13 +26,13 @@
 				<div class="news-link-to-wrapper">
 					<div class="link-position">
 						<c:if test="${sessionScope.role eq 'admin'}">
-						      <a href="controller?command=go_to_edit_news&idNews=${news.id}">${edit} </a>
+						      <a href="edit/${news.id}">${edit} </a>
 						</c:if>
 						<span>&nbsp&nbsp</span>
-						<a href="controller?command=go_to_view_news&idNews=${news.id}">${newslist_view} </a>
+						<a href="view/${news.id}">${newslist_view} </a>
    					    
    					    <c:if test="${sessionScope.role eq 'admin'}">
-   					         <form:input type="checkbox" path="id" value="${news.id }" />
+   					         <input type="checkbox" name="id" value="${news.id}" />
    					    </c:if>
 					</div>
 				</div>
@@ -43,32 +42,18 @@
 
 	</c:forEach>
 
-    <c:if test="${(sessionScope.role eq 'admin') and (not (requestScope.news eq null))}">
+    <c:if test="${(sessionScope.role eq 'admin') and (not (news eq null))}">
         <div class="delete-button-position">
-
-            <input type="hidden" name="command" value="do_delete_news" />
             <input type="submit" value="${delete}" />
-
         </div>
     </c:if>
-
-
-	<%--
-	 <!-- <logic:notEmpty name="newsForm" property="newsList">
-		<div class="delete-button-position">
-			<html:submit>
-				<bean:message key="locale.newslink.deletebutton" />
-			</html:submit>
-		</div>
-	</logic:notEmpty>
-    -->--%>
 
 	<div class="no-news">
 		<c:if test="${news eq null}">
         ${nonews}
 	</c:if>
 	</div>
-</form:form>
+</form>
 
 <form name="amountForm" action="newslist" method="get" style="margin: 20px; font-size: larger; min-font-size: 14">
 	<input type="hidden" name="page" value="${requestScope.page}">

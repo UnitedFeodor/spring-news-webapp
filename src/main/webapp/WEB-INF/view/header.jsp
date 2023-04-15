@@ -19,19 +19,6 @@
 	<div class="local-link">
 
 		<div align="right">
-			<!-- <%--
-			<form class="form-inline" style ='display:inline-block;' action="controller" method="get">
-				<input type="hidden" name="command" value="do_change_language" />
-				<input type="hidden" name="local" value="en" />
-				<input type="submit" name="en" value="${header_en}" />
-
-			</form>
-			<form class="form-inline" style ='display:inline-block;' action="controller" method="get">
-				<input type="hidden" name="command" value="do_change_language" />
-				<input type="hidden" name="local" value="ru" />
-				<input type="submit" name="ru" value="${header_ru}" />
-
-			</form> --%> -->
 			<a href="controller?command=do_change_language&local=en"> ${header_en} </a> &nbsp;&nbsp;
 			<a href="controller?command=do_change_language&local=ru"> ${header_ru} </a> <br /> <br />
 		</div>

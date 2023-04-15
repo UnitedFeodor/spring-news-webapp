@@ -3,7 +3,7 @@
 
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 <div class="body-title">
-	<a href="controller?command=go_to_news_list">${goback_news}</a> ${viewnews_goback_current}
+	<a href="/newslist">${goback_news}</a> ${viewnews_goback_current}
 </div>
 
 <div class="add-table-margin">
@@ -12,7 +12,7 @@
 			<td class="space_around_title_text">${title}</td>
 
 			<td class="space_around_view_text"><div class="word-breaker">
-					<c:out value="${requestScope.news.title }" />
+					<c:out value="${news.title }" />
 				</div></td>
 		</tr>
 		<tr>
@@ -25,13 +25,13 @@
 		<tr>
 			<td class="space_around_title_text">${brief}</td>
 			<td class="space_around_view_text"><div class="word-breaker">
-					<c:out value="${requestScope.news.brief }" />
+					<c:out value="${news.brief }" />
 				</div></td>
 		</tr>
 		<tr>
 			<td class="space_around_title_text">${content}</td>
 			<td class="space_around_view_text"><div class="word-breaker">
-					<c:out value="${requestScope.news.content }" />
+					<c:out value="${news.content }" />
 				</div></td>
 		</tr>
 	</table>
@@ -40,17 +40,13 @@
 
 <c:if test="${sessionScope.role eq 'admin'}">
 	<div style="margin-left: 30px; margin-bottom: 10px">
-		<form action="controller" method="post">
-			<input type="hidden" name="command" value="go_to_edit_news" />
-			<input type="hidden" name="idNews" value="${news.id}" />
+		<form action="edit/${news.id}" method="post">
 			<input type="submit" value="${edit}" />
 		</form>
 	</div>
 
 	<div style="margin-left: 30px" >
-		<form action="controller" method="post">
-			<input type="hidden" name="command" value="do_delete_news" />
-			<input type="hidden" name="idNews" value="${news.id}" />
+		<form action="delete/${news.id}" method="post">
 			<input type="submit" value="${delete}" />
 		</form>
 	</div>
