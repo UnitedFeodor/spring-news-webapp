@@ -10,7 +10,7 @@
     <form action="/news/edit/${news.id}" method="post"> <!-- onsubmit="return validateNewsForm()" name="newsForm" -->
         <table class="news_text_format">
             <tr>
-                <td class="space_around_title_text">${title}</td>
+                <td class="space_around_title_text">${news_title}</td>
 
                 <td class="space_around_view_text"><div class="word-breaker">
                     <input type="text" name="news_title" value="<c:out value="${news.title }"/>"/>

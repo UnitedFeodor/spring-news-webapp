@@ -1,6 +1,7 @@
 package com.htp.springnewswebapp.entity;
 
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -19,6 +20,7 @@ public class News {
     @Column(name = "content")
     private String content;
     @Column(name = "date_added")
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate dateAdded;
 
 

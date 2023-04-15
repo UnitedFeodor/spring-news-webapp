@@ -4,6 +4,8 @@ package com.htp.springnewswebapp.service.impl;
 import com.htp.springnewswebapp.dao.DaoException;
 import com.htp.springnewswebapp.dao.NewsDAO;
 import com.htp.springnewswebapp.entity.News;
+import com.htp.springnewswebapp.entity.NewsStatus;
+import com.htp.springnewswebapp.entity.UserStatus;
 import com.htp.springnewswebapp.service.NewsService;
 import com.htp.springnewswebapp.service.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import java.util.List;
 @Service
 public class NewsServiceImpl implements NewsService {
 
+	private static final int DB_ON_CREATION_NEWS_STATUS_ID = 1;
 	private final NewsDAO newsDAO;
 
 	@Autowired
@@ -40,6 +43,10 @@ public class NewsServiceImpl implements NewsService {
 	@Override
 	public void add(News news) throws ServiceException {
 		try {
+			NewsStatus newsStatus = new NewsStatus();
+			newsStatus.setId(DB_ON_CREATION_NEWS_STATUS_ID);
+			news.setStatus(newsStatus);
+
 			newsDAO.addNews(news);
 		} catch (DaoException e) {
 			throw new ServiceException(e);

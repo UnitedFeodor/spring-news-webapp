@@ -16,6 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @Controller
@@ -222,28 +225,48 @@ public class FrontController {
 
     @RequestMapping(value = "/edit/{id}",method = RequestMethod.POST)
     public String editNews() {
-
+        return null;
     }
 
     @RequestMapping(value = "/add",method = RequestMethod.GET)
     public String goToAddNews(HttpServletRequest request, Model model) {
-        request.setAttribute(JSPConstants.PRESENTATION, JSPConstants.EDIT_NEWS);
+        request.setAttribute(JSPConstants.PRESENTATION, JSPConstants.ADD_NEWS);
         return "baseLayout";
 
     }
 
     @RequestMapping(value = "/add",method = RequestMethod.POST)
-    public String addNews() {
+    public String addNews(
+            @ModelAttribute("news") News news,
+            HttpServletRequest request,
+            Model model) {
+        HttpSession session = request.getSession(false);
 
+        try {
+            int userId = (int) session.getAttribute(UserConstants.USER_ID);
+            User author = new User();
+            author.setId(userId);
+
+            news.setAuthor(author);
+
+            newsService.add(news);
+            session.setAttribute(JSPConstants.JSP_SAVE_SUCCESS, JSPConstants.SUC);
+            return "redirect:/newslist";
+
+        } catch (ServiceException e) {
+            session.setAttribute(JSPConstants.ERROR_MESSAGE, "add error");
+            return "error";
+
+        }
     }
 
     @RequestMapping(value = "/delete/{id}",method = RequestMethod.POST)
     public String deleteNewsPiece() {
-
+        return null;
     }
 
     @RequestMapping(value = "/deletenews",method = RequestMethod.POST)
     public String deleteSeveralNews() {
-
+        return null;
     }
 }

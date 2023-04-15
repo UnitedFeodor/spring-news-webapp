@@ -9,7 +9,7 @@
 <div class="add-table-margin">
 	<table class="news_text_format">
 		<tr>
-			<td class="space_around_title_text">${title}</td>
+			<td class="space_around_title_text">${news_title}</td>
 
 			<td class="space_around_view_text"><div class="word-breaker">
 					<c:out value="${news.title }" />
