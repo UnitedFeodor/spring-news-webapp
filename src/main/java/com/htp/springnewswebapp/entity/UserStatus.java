@@ -11,6 +11,6 @@ public class UserStatus {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer id;
-    @Column(name="title")
+    @Column(name="status_name")
     private String title;
 }

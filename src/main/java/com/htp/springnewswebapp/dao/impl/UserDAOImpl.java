@@ -7,6 +7,7 @@ import com.htp.springnewswebapp.entity.User;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.exception.SQLGrammarException;
 import org.hibernate.query.Query;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;

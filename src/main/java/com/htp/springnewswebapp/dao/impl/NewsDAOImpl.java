@@ -93,7 +93,8 @@ public class NewsDAOImpl implements com.htp.springnewswebapp.dao.NewsDAO {
 	public int getTotalNewsAmount() throws DaoException {
 		try {
 			Session currentSession = sessionFactory.getCurrentSession();
-			return (int) currentSession.createQuery("select count(*) from News").getSingleResult();
+
+			return (int)((long)currentSession.createQuery("select count(*) from News").getSingleResult());
 		} catch (HibernateException e) {
 			throw new DaoException("Hibernate error", e);
 		}

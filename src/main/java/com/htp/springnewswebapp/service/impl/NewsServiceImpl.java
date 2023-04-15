@@ -15,7 +15,7 @@ import java.util.List;
 @Service
 public class NewsServiceImpl implements NewsService {
 
-	private NewsDAO newsDAO;
+	private final NewsDAO newsDAO;
 
 	@Autowired
 	public NewsServiceImpl(NewsDAO newsDAO) {
@@ -76,7 +76,10 @@ public class NewsServiceImpl implements NewsService {
 		}
 
 		try {
-			return newsDAO.getCountNewsStartingFrom(count, from);
+			List<News> newsList = newsDAO.getCountNewsStartingFrom(count, from);
+			News news = newsList.get(0);
+			return newsList;
+
 		} catch (DaoException e) {
 			throw new ServiceException(e);
 		}

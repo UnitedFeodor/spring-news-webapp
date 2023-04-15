@@ -2,12 +2,15 @@
 <%@ include file="/WEB-INF/view/localization/localizationBase.jsp" %>
 
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+
 <div class="body-title">
 	<a href="">${goback_news} </a> ${newslist_goback_current}
 </div>
 
-<form action="controller" method="post">
-	<c:forEach var="news" items="${requestScope.news}">
+<form:form action="deletenews" method="post">
+	<c:forEach var="news" items="${news}">
 		<div class="single-news-wrapper">
 			<div class="single-news-header-wrapper">
 				<div class="news-title">
@@ -30,7 +33,7 @@
 						<a href="controller?command=go_to_view_news&idNews=${news.id}">${newslist_view} </a>
    					    
    					    <c:if test="${sessionScope.role eq 'admin'}">
-   					         <input type="checkbox" name="idNews" value="${news.id }" />
+   					         <form:input type="checkbox" path="id" value="${news.id }" />
    					    </c:if>
 					</div>
 				</div>
@@ -65,7 +68,7 @@
         ${nonews}
 	</c:if>
 	</div>
-</form>
+</form:form>
 
 <form name="amountForm" action="controller" method="get" style="margin: 20px; font-size: larger; min-font-size: 14">
 	<input type="hidden" name="command" value="go_to_news_list" />

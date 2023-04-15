@@ -2,8 +2,7 @@ package com.htp.springnewswebapp.controller;
 
 import com.htp.springnewswebapp.constants.JSPConstants;
 import com.htp.springnewswebapp.constants.UserConstants;
-import com.htp.springnewswebapp.entity.News;
-import com.htp.springnewswebapp.entity.User;
+import com.htp.springnewswebapp.entity.*;
 import com.htp.springnewswebapp.service.NewsService;
 import com.htp.springnewswebapp.service.ServiceException;
 import com.htp.springnewswebapp.service.UserService;
@@ -35,13 +34,24 @@ public class FrontController {
     private final NewsService newsService;
     private final UserService userService;
 
+    @ModelAttribute("user")
+    private User insertUserInModel() {
+        User user = new User();
+        user.setStatus(new UserStatus());
+        user.setUserDetails(new UserDetails());
+        user.setRole(new Role());
+
+
+
+        return user;
+    }
 
     @RequestMapping("/home")
     public String goToHomePage(Model model) {
         List<News> latestNews;
         try {
             latestNews = newsService.getAllNews();
-            if(latestNews.size() > 0) {
+            if (latestNews.size() > 0) {
                 model.addAttribute(JSP_NEWS, latestNews);
             }
 
@@ -54,8 +64,8 @@ public class FrontController {
 
     @RequestMapping(value = "/signup", method = RequestMethod.GET)
     public String goToRegistrationPage(HttpServletRequest request, Model model) {
-        User user = new User();
-        model.addAttribute("user",user);
+//        User user = new User();
+//        model.addAttribute("user",user);
         request.setAttribute(JSPConstants.PRESENTATION, JSPConstants.REGISTRATION);
         return "baseLayout";
     }
@@ -71,10 +81,23 @@ public class FrontController {
 
     }
 
+    @RequestMapping(value = "/signout", method = RequestMethod.POST)
+    public String signUp(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+
+        session.setAttribute(UserConstants.USER_ACTIVITY, UserConstants.USER_STATUS_NOT_ACTIVE);
+        session.setAttribute(UserConstants.USER_ROLE, UserConstants.ROLE_GUEST);
+        session.removeAttribute(UserConstants.USER_ID);
+        return "redirect:/home";
+
+
+    }
+
 
     @RequestMapping(value = "/signin", method = RequestMethod.POST)
-    public String signIn(HttpServletRequest request, HttpServletResponse response) {
-        HttpSession session = request.getSession(false);	// TODO add user cabinet to change details and see them
+    public String signIn(HttpServletRequest request) {
+        // TODO creation in filter
+        HttpSession session = request.getSession(true);	// TODO add user cabinet to change details and see them
         try {
             String login;
             String password;
@@ -91,15 +114,84 @@ public class FrontController {
                 session.setAttribute(UserConstants.USER_ROLE, user.getRole());
                 session.setAttribute(UserConstants.USER_ID,user.getId());
 
-                return "newsList";
-                //response.sendRedirect(JSPConstants.CONTROLLER_GO_TO_NEWS_LIST);
+                request.setAttribute(JSPConstants.PRESENTATION, JSPConstants.NEWS_LIST);
+                return "redirect:/newslist";
             } else {
                 session.setAttribute(UserConstants.USER_ACTIVITY, UserConstants.USER_STATUS_NOT_ACTIVE);
                 session.setAttribute(AUTH_ERROR, "wrong login or password");
 
-                return "home";
+                return "redirect:/home";
             }
         } catch (ServiceException e) {
+            return "error";
+        }
+
+    }
+
+    @RequestMapping(value = "/newslist", method = RequestMethod.GET)
+    public String goToNewsList(HttpServletRequest request, Model model) {
+        final String JSP_COUNT_PARAM = "count";
+        final String JSP_PAGE_NUMBER_PARAM = "page";
+        final String JSP_FINAL_PAGE_NUMBER = "final_page_number";
+        final int DEFAULT_COUNT = 5;
+        final int DEFAULT_PAGE = 1;
+
+        List<News> newsList;
+        try {
+
+            int newsPage;
+            String pageParam = request.getParameter(JSP_PAGE_NUMBER_PARAM);
+            if (pageParam == null) {
+                newsPage = DEFAULT_PAGE;
+            } else {
+                newsPage = Integer.parseInt(pageParam);
+            }
+
+            String sessionCountParam = (String) request.getSession(false).getAttribute(JSP_COUNT_PARAM);
+            String countParam = request.getParameter(JSP_COUNT_PARAM);
+            int newsCount;
+            if (countParam == null) {
+
+                if (sessionCountParam == null) {
+                    newsCount = DEFAULT_COUNT;
+                } else {
+                    newsCount = Integer.parseInt(sessionCountParam);
+                }
+
+            } else {
+                newsCount = Integer.parseInt(countParam);
+            }
+
+            if (countParam != null && sessionCountParam != null && !countParam.equals(sessionCountParam)) {
+                newsPage = DEFAULT_PAGE;
+            }
+
+
+//            newsList = newsService.getAllNews(); // TODO temp debug
+            newsList = newsService.getCountNewsStartingFrom(newsCount,newsPage);
+            if (newsList.size() > 0) {
+                model.addAttribute(JSP_NEWS, newsList);
+//                request.setAttribute(JSPConstants.NEWS, newsList);
+            }
+            int totalNewsAmount = newsService.getTotalNewsAmount();
+            int finalPageNumber = totalNewsAmount % newsCount == 0 ? totalNewsAmount / newsCount : totalNewsAmount / newsCount + 1;
+
+            request.setAttribute(JSP_FINAL_PAGE_NUMBER,finalPageNumber);
+            request.setAttribute(JSP_PAGE_NUMBER_PARAM, newsPage);
+            request.getSession(false).setAttribute(JSP_COUNT_PARAM,String.valueOf(newsCount));
+
+            request.setAttribute(JSPConstants.PRESENTATION, JSPConstants.NEWS_LIST);
+
+            return "baseLayout";
+
+
+        } catch (ServiceException e) {
+            HttpSession session = request.getSession(false);
+            session.setAttribute(JSPConstants.ERROR_MESSAGE,"cannot get the list of news");
+            return "error";
+        } catch (NumberFormatException e) {
+            HttpSession session = request.getSession(false);
+            session.setAttribute(JSPConstants.ERROR_MESSAGE,"invalid request parameters");
             return "error";
         }
 

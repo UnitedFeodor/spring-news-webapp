@@ -1,5 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <%@ include file="/WEB-INF/view/localization/localizationBase.jsp" %>
 <%--
@@ -37,9 +39,9 @@
 		<c:if test="${not (sessionScope.userActivity eq 'active')}">
 
 			<div align="right">
-				<form action="signin" method="post">
-					${header_logination_login} <input type="text" name="login" value="" /><br />
-					${header_logination_password} <input type="password" name="password" value="" /><br />
+				<form:form action="signin" modelAttribute="user" method="post">
+					${header_logination_login} <form:input type="text" path="login" value="" /><br />
+					${header_logination_password} <form:input type="password" path="password" value="" /><br />
 
 					<c:if test="${not (sessionScope.auth_error eq null)}">
 						<font color="red"> 
@@ -63,7 +65,7 @@
 					</c:if>
 
 					<a href="signup">${header_registration_link}</a> <input type="submit" value="${header_signin}" /><br />
-				</form>
+				</form:form>
 			</div>
 
 		</c:if>
@@ -71,8 +73,7 @@
 		<c:if test="${sessionScope.userActivity eq 'active'}">
 
 			<div align="right">
-				<form action="controller" method="post">
-					<input type="hidden" name="command" value="do_sign_out" /> 
+				<form action="signout" method="post">
 					<input type="submit" value="${header_signout}" /><br />
 				</form>
 

@@ -9,7 +9,6 @@ ${guestinfo_head}
 	<a href="">${goback_news} </a> ${guestinfo_goback_current}
 </div>
 
-<form action="controller" method="post">
 	<c:forEach var="news" items="${news}">
 		<div class="single-news-wrapper">
 			<div class="single-news-header-wrapper">
@@ -35,4 +34,3 @@ ${guestinfo_head}
 		</c:if>
 	</div>
 
-</form>
