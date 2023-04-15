@@ -26,7 +26,7 @@ public class NewsDAOImpl implements com.htp.springnewswebapp.dao.NewsDAO {
 	public List<News> getAllNews() throws DaoException {
 		try {
 			Session currentSession = sessionFactory.getCurrentSession();
-			Query<News> newsQuery = currentSession.createQuery("from News order by dateAdded", News.class);
+			Query<News> newsQuery = currentSession.createQuery("from News order by dateAdded DESC", News.class);
 			return newsQuery.getResultList();
 		}  catch (HibernateException e) {
 			throw new DaoException("Hibernate error", e);
@@ -38,7 +38,7 @@ public class NewsDAOImpl implements com.htp.springnewswebapp.dao.NewsDAO {
 	public List<News> getCountNewsStartingFrom(int count, int from) throws DaoException {
 		try {
 			Session currentSession = sessionFactory.getCurrentSession();
-			Query<News> newsQuery = currentSession.createQuery("from News order by dateAdded", News.class).setFirstResult(from).setMaxResults(count);
+			Query<News> newsQuery = currentSession.createQuery("from News order by dateAdded DESC", News.class).setFirstResult(from*count).setMaxResults(count);
 			return newsQuery.getResultList();
 		}  catch (HibernateException e) {
 			throw new DaoException("Hibernate error", e);

@@ -76,9 +76,7 @@ public class NewsServiceImpl implements NewsService {
 		}
 
 		try {
-			List<News> newsList = newsDAO.getCountNewsStartingFrom(count, from);
-			News news = newsList.get(0);
-			return newsList;
+			return newsDAO.getCountNewsStartingFrom(count, from);
 
 		} catch (DaoException e) {
 			throw new ServiceException(e);

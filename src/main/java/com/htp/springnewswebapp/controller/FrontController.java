@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -128,57 +129,69 @@ public class FrontController {
 
     }
 
+    private final String JSP_COUNT_PARAM = "count";
+    private final String JSP_PAGE_NUMBER_PARAM = "page";
+    private final String JSP_FINAL_PAGE_NUMBER = "final_page_number";
+    private final int DEFAULT_COUNT = 5;
+    private final int DEFAULT_PAGE = 1;
+    private final String DEFAULT_PAGE_STRING = "1";
+    private final String DEFAULT_COUNT_STRING = "5";
+
     @RequestMapping(value = "/newslist", method = RequestMethod.GET)
-    public String goToNewsList(HttpServletRequest request, Model model) {
-        final String JSP_COUNT_PARAM = "count";
-        final String JSP_PAGE_NUMBER_PARAM = "page";
-        final String JSP_FINAL_PAGE_NUMBER = "final_page_number";
-        final int DEFAULT_COUNT = 5;
-        final int DEFAULT_PAGE = 1;
+    public String goToNewsList(
+            @RequestParam(required = false, defaultValue = DEFAULT_PAGE_STRING , value= JSP_PAGE_NUMBER_PARAM) String pageParam,
+            @RequestParam(required = false, defaultValue =  DEFAULT_COUNT_STRING, value= JSP_COUNT_PARAM) String countParam,
+            HttpServletRequest request,
+            Model model) {
 
         List<News> newsList;
         try {
 
             int newsPage;
-            String pageParam = request.getParameter(JSP_PAGE_NUMBER_PARAM);
-            if (pageParam == null) {
-                newsPage = DEFAULT_PAGE;
-            } else {
+//            pageParam = request.getParameter(JSP_PAGE_NUMBER_PARAM);
+//            if (pageParam == null) {
+//                newsPage = DEFAULT_PAGE;
+//            } else {
                 newsPage = Integer.parseInt(pageParam);
-            }
+//            }
 
-            String sessionCountParam = (String) request.getSession(false).getAttribute(JSP_COUNT_PARAM);
-            String countParam = request.getParameter(JSP_COUNT_PARAM);
+            //String sessionCountParam = (String) request.getSession(false).getAttribute(JSP_COUNT_PARAM);
+//            countParam = request.getParameter(JSP_COUNT_PARAM);
             int newsCount;
-            if (countParam == null) {
+//            if (countParam == null) {
 
-                if (sessionCountParam == null) {
-                    newsCount = DEFAULT_COUNT;
-                } else {
-                    newsCount = Integer.parseInt(sessionCountParam);
-                }
+//                if (sessionCountParam == null) {
+                    newsCount = Integer.parseInt(countParam);
+//                } else {
+//                    newsCount = Integer.parseInt(sessionCountParam);
+//                }
 
-            } else {
-                newsCount = Integer.parseInt(countParam);
-            }
+//            } else {
+//                newsCount = Integer.parseInt(countParam);
+//            }
 
-            if (countParam != null && sessionCountParam != null && !countParam.equals(sessionCountParam)) {
+//            if (countParam != null && sessionCountParam != null && !countParam.equals(sessionCountParam)) {
+//                newsPage = DEFAULT_PAGE;
+//            }
+            int totalNewsAmount = newsService.getTotalNewsAmount();
+
+            if (totalNewsAmount < newsCount*newsPage) {
                 newsPage = DEFAULT_PAGE;
             }
 
 
-//            newsList = newsService.getAllNews(); // TODO temp debug
-            newsList = newsService.getCountNewsStartingFrom(newsCount,newsPage);
+            newsList = newsService.getCountNewsStartingFrom(newsCount,newsPage-1);
             if (newsList.size() > 0) {
                 model.addAttribute(JSP_NEWS, newsList);
 //                request.setAttribute(JSPConstants.NEWS, newsList);
             }
-            int totalNewsAmount = newsService.getTotalNewsAmount();
+
             int finalPageNumber = totalNewsAmount % newsCount == 0 ? totalNewsAmount / newsCount : totalNewsAmount / newsCount + 1;
 
             request.setAttribute(JSP_FINAL_PAGE_NUMBER,finalPageNumber);
             request.setAttribute(JSP_PAGE_NUMBER_PARAM, newsPage);
-            request.getSession(false).setAttribute(JSP_COUNT_PARAM,String.valueOf(newsCount));
+            request.setAttribute(JSP_COUNT_PARAM, countParam);
+//            request.getSession(false).setAttribute(JSP_COUNT_PARAM,String.valueOf(newsCount));
 
             request.setAttribute(JSPConstants.PRESENTATION, JSPConstants.NEWS_LIST);
 
