@@ -7,21 +7,12 @@ import com.htp.springnewswebapp.service.NewsService;
 import com.htp.springnewswebapp.service.ServiceException;
 import com.htp.springnewswebapp.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -300,5 +291,19 @@ public class FrontController {
             return "error";
 
         }
+    }
+
+    @RequestMapping(value = "/language", method = RequestMethod.GET)
+    public String changeLanguage(
+            @RequestParam(required = false, value= JSPConstants.LOCALE) String local,
+            HttpServletRequest request) {
+        HttpSession session = request.getSession(true);
+        session.setAttribute(JSPConstants.LOCALE, local);
+
+        return UserConstants.USER_STATUS_ACTIVE.equals(session.getAttribute(UserConstants.USER_ACTIVITY))
+                ? "redirect:/newslist"
+                : "redirect:/home";
+
+
     }
 }

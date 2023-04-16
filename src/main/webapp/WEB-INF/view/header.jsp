@@ -19,8 +19,8 @@
 	<div class="local-link">
 
 		<div align="right">
-			<a href="controller?command=do_change_language&local=en"> ${header_en} </a> &nbsp;&nbsp;
-			<a href="controller?command=do_change_language&local=ru"> ${header_ru} </a> <br /> <br />
+			<a href="/news/language?local=en"> ${header_en} </a> &nbsp;&nbsp;
+			<a href="/news/language?local=ru"> ${header_ru} </a> <br /> <br />
 		</div>
 
 		<c:if test="${not (sessionScope.userActivity eq 'active')}">
