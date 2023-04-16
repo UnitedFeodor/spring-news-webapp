@@ -16,6 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -224,8 +227,20 @@ public class FrontController {
     }
 
     @RequestMapping(value = "/edit/{id}",method = RequestMethod.POST)
-    public String editNews() {
-        return null;
+    public String editNews(
+            @ModelAttribute("news") News news,
+            HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        try {
+            newsService.update(news);
+            session.setAttribute(JSPConstants.JSP_SAVE_SUCCESS, JSPConstants.SUC);
+            return "redirect:/newslist";
+
+        } catch (ServiceException e) {
+            session.setAttribute(JSPConstants.ERROR_MESSAGE, "edit error");
+            return "error";
+
+        }
     }
 
     @RequestMapping(value = "/add",method = RequestMethod.GET)
@@ -238,8 +253,7 @@ public class FrontController {
     @RequestMapping(value = "/add",method = RequestMethod.POST)
     public String addNews(
             @ModelAttribute("news") News news,
-            HttpServletRequest request,
-            Model model) {
+            HttpServletRequest request) {
         HttpSession session = request.getSession(false);
 
         try {
