@@ -25,7 +25,7 @@
                 <td class="space_around_title_text2">${header_logination_login}</td>
                 
                 <td  class="space_around_view_text2">
-                    <form:input  type="text" path="login"/> <br>
+                    <form:input type="text" path="login"/> <br>
                 </td>
 
             </tr>
@@ -34,7 +34,7 @@
                     ${header_logination_password}
                 </td>
                 <td  class="space_around_view_text2">
-                    <form:input  type="text" path="password"/> <br>
+                    <form:input type="text" path="password"/> <br>
                 </td>
             </tr>
             <tr>

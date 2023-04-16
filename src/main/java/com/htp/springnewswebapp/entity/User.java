@@ -34,6 +34,9 @@ public class User {
     private Role role;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "author", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
+    @OneToMany(mappedBy = "author",
+            fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL)
+
     private List<News> news;
 }

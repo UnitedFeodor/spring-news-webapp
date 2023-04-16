@@ -232,6 +232,7 @@ public class FrontController {
             HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         try {
+
             newsService.update(news);
             session.setAttribute(JSPConstants.JSP_SAVE_SUCCESS, JSPConstants.SUC);
             return "redirect:/newslist";
@@ -254,6 +255,7 @@ public class FrontController {
     public String addNews(
             @ModelAttribute("news") News news,
             HttpServletRequest request) {
+
         HttpSession session = request.getSession(false);
 
         try {

@@ -11,8 +11,8 @@
 
 <div class="add-table-margin">
     <form:form action="/news/edit/${news.id}" modelAttribute="news" method="post"> <!-- onsubmit="return validateNewsForm()" name="newsForm" -->
-        <form:input type="hidden" path="author"/>
-        <form:input type="hidden" path="status"/>
+        <form:input type="hidden" path="author.id" name="news_author" />
+        <form:input type="hidden" path="status.id"/>
         <table class="news_text_format">
             <tr>
                 <td class="space_around_title_text">${news_title}</td>
