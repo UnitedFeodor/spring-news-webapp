@@ -12,6 +12,7 @@ public final class JSPConstants {
     public static final String CURRENT_REQUEST_PARAMS = "current_request_params";
 
     public static final String JSP_SAVE_SUCCESS = "save_success";
+    public static final String JSP_DELETE_SUCCESS = "delete_success";
 
     public static final String ERR = "err";
     public static final String SUC = "suc";

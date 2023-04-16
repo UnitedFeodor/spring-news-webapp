@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class NewsDAOImpl implements com.htp.springnewswebapp.dao.NewsDAO {
@@ -81,8 +83,10 @@ public class NewsDAOImpl implements com.htp.springnewswebapp.dao.NewsDAO {
 	public void deleteNews(int[] newsIds) throws DaoException {
 		try {
 			Session currentSession = sessionFactory.getCurrentSession();
-			currentSession.createQuery("delete from News news where news.id in (:newsIds)", News.class)
-					.setParameterList("newsIds",List.of(newsIds))
+			List<Integer> newsIdsList = Arrays.stream(newsIds).boxed().collect(Collectors.toList());
+
+			currentSession.createQuery("delete from News news where news.id in (:newsIds)")
+					.setParameterList("newsIds",newsIdsList)
 					.executeUpdate();
 		} catch (HibernateException e) {
 			throw new DaoException("Hibernate error", e);

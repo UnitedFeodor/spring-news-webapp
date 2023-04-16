@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Controller
 @RequiredArgsConstructor
@@ -276,13 +277,28 @@ public class FrontController {
         }
     }
 
-    @RequestMapping(value = "/delete/{id}",method = RequestMethod.POST)
-    public String deleteNewsPiece() {
-        return null;
-    }
 
     @RequestMapping(value = "/deletenews",method = RequestMethod.POST)
-    public String deleteSeveralNews() {
-        return null;
+    public String deleteSeveralNews(
+            @RequestParam("id")String[] newsIdsStringArr,
+            HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+
+        int[] newsIds = Stream.of(newsIdsStringArr).mapToInt(Integer::parseInt).toArray();
+        if (newsIds != null) {
+            try {
+                newsService.delete(newsIds);
+                session.setAttribute(JSPConstants.JSP_DELETE_SUCCESS,JSPConstants.SUC);
+                return "redirect:/newslist";
+            } catch (ServiceException e) {
+                session.setAttribute(JSPConstants.ERROR_MESSAGE,"delete error");
+                return "error";
+            }
+
+        } else {
+            session.setAttribute(JSPConstants.ERROR_MESSAGE,"no news to delete selected");
+            return "error";
+
+        }
     }
 }

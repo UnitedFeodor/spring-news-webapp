@@ -46,7 +46,8 @@
 	</div>
 
 	<div style="margin-left: 30px" >
-		<form action="/news/delete/${news.id}" method="post">
+		<form action="/news/deletenews" method="post">
+			<input type="hidden"name="id" value="${news.id}" />
 			<input type="submit" value="${delete}" />
 		</form>
 	</div>
