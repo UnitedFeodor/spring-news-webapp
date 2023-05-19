@@ -6,7 +6,7 @@ import com.htp.springnewswebapp.entity.*;
 import com.htp.springnewswebapp.service.NewsService;
 import com.htp.springnewswebapp.service.ServiceException;
 import com.htp.springnewswebapp.service.UserService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,18 +17,16 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @Controller
-@RequiredArgsConstructor
 public class FrontController {
-
-    private static final String JSP_NEWS = "news";
-    private static final String AUTH_ERROR = "auth_error";
-    private static final String LOGIN = "login";
-
-    private static final String JSP_LOGIN_PARAM = "login";
-    private static final String JSP_PASSWORD_PARAM = "password";
 
     private final NewsService newsService;
     private final UserService userService;
+
+    @Autowired
+    public FrontController(NewsService newsService, UserService userService) {
+        this.newsService = newsService;
+        this.userService = userService;
+    }
 
     @ModelAttribute("user")
     private User insertUserInModel() {
@@ -56,7 +54,7 @@ public class FrontController {
         try {
             latestNews = newsService.getAllNews();
             if (latestNews.size() > 0) {
-                model.addAttribute(JSP_NEWS, latestNews);
+                model.addAttribute(JSPConstants.JSP_NEWS, latestNews);
             }
 
             return "baseLayout";
@@ -102,8 +100,8 @@ public class FrontController {
         try {
             String login;
             String password;
-            login = request.getParameter(JSP_LOGIN_PARAM);
-            password = request.getParameter(JSP_PASSWORD_PARAM);
+            login = request.getParameter(JSPConstants.JSP_LOGIN_PARAM);
+            password = request.getParameter(JSPConstants.JSP_PASSWORD_PARAM);
 
             User user = new User();
             user.setLogin(login);
@@ -119,7 +117,7 @@ public class FrontController {
                 return "redirect:/newslist";
             } else {
                 session.setAttribute(UserConstants.USER_ACTIVITY, UserConstants.USER_STATUS_NOT_ACTIVE);
-                session.setAttribute(AUTH_ERROR, "wrong login or password");
+                session.setAttribute(JSPConstants.AUTH_ERROR, "wrong login or password");
 
                 return "redirect:/home";
             }
@@ -129,17 +127,10 @@ public class FrontController {
 
     }
 
-    private final String JSP_COUNT_PARAM = "count";
-    private final String JSP_PAGE_NUMBER_PARAM = "page";
-    private final String JSP_FINAL_PAGE_NUMBER = "final_page_number";
-    private final int DEFAULT_PAGE = 1;
-    private final String DEFAULT_PAGE_STRING = "1";
-    private final String DEFAULT_COUNT_STRING = "5";
-
     @RequestMapping(value = "/newslist", method = RequestMethod.GET)
     public String goToNewsList(
-            @RequestParam(required = false, defaultValue = DEFAULT_PAGE_STRING , value= JSP_PAGE_NUMBER_PARAM) String pageParam,
-            @RequestParam(required = false, defaultValue =  DEFAULT_COUNT_STRING, value= JSP_COUNT_PARAM) String countParam,
+            @RequestParam(required = false, defaultValue = JSPConstants.DEFAULT_PAGE_STRING , value= JSPConstants.JSP_PAGE_NUMBER_PARAM) String pageParam,
+            @RequestParam(required = false, defaultValue =  JSPConstants.DEFAULT_COUNT_STRING, value= JSPConstants.JSP_COUNT_PARAM) String countParam,
             HttpServletRequest request,
             Model model) {
 
@@ -150,19 +141,19 @@ public class FrontController {
             int totalNewsAmount = newsService.getTotalNewsAmount();
 
             if (totalNewsAmount < newsCount*newsPage) {
-                newsPage = DEFAULT_PAGE;
+                newsPage = JSPConstants.DEFAULT_PAGE;
             }
 
             newsList = newsService.getCountNewsStartingFrom(newsCount,newsPage-1);
             if (newsList.size() > 0) {
-                model.addAttribute(JSP_NEWS, newsList);
+                model.addAttribute(JSPConstants.JSP_NEWS, newsList);
             }
 
             int finalPageNumber = totalNewsAmount % newsCount == 0 ? totalNewsAmount / newsCount : totalNewsAmount / newsCount + 1;
 
-            request.setAttribute(JSP_FINAL_PAGE_NUMBER,finalPageNumber);
-            request.setAttribute(JSP_PAGE_NUMBER_PARAM, newsPage);
-            request.setAttribute(JSP_COUNT_PARAM, countParam);
+            request.setAttribute(JSPConstants.JSP_FINAL_PAGE_NUMBER,finalPageNumber);
+            request.setAttribute(JSPConstants.JSP_PAGE_NUMBER_PARAM, newsPage);
+            request.setAttribute(JSPConstants.JSP_COUNT_PARAM, countParam);
 
             request.setAttribute(JSPConstants.PRESENTATION, JSPConstants.NEWS_LIST);
 

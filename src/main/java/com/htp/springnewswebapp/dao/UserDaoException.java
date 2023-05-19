@@ -2,23 +2,23 @@ package com.htp.springnewswebapp.dao;
 
 import java.io.Serial;
 
-public class DaoException extends Exception {
+public class UserDaoException extends Exception {
 	@Serial
 	private static final long serialVersionUID = 8814453066415187129L;
 
-	public DaoException() {
+	public UserDaoException() {
 		super();
 	}
 	
-	public DaoException(String message) {
+	public UserDaoException(String message) {
 		super(message);
 	}
 	
-	public DaoException(Exception e) {
+	public UserDaoException(Exception e) {
 		super(e);
 	}
 	
-	public DaoException(String message, Exception e) {
+	public UserDaoException(String message, Exception e) {
 		super(message, e);
 	}
 }

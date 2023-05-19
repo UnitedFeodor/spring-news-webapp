@@ -1,6 +1,6 @@
 package com.htp.springnewswebapp.dao.impl;
 
-import com.htp.springnewswebapp.dao.DaoException;
+import com.htp.springnewswebapp.dao.UserDaoException;
 import com.htp.springnewswebapp.entity.News;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -25,62 +25,62 @@ public class NewsDAOImpl implements com.htp.springnewswebapp.dao.NewsDAO {
 	}
 
 	@Override
-	public List<News> getAllNews() throws DaoException {
+	public List<News> getAllNews() throws UserDaoException {
 		try {
 			Session currentSession = sessionFactory.getCurrentSession();
 			Query<News> newsQuery = currentSession.createQuery("from News order by dateAdded DESC", News.class);
 			return newsQuery.getResultList();
 		}  catch (HibernateException e) {
-			throw new DaoException("Hibernate error", e);
+			throw new UserDaoException("Hibernate error", e);
 		}
 
 	}
 
 	@Override
-	public List<News> getCountNewsStartingFrom(int count, int from) throws DaoException {
+	public List<News> getCountNewsStartingFrom(int count, int from) throws UserDaoException {
 		try {
 			Session currentSession = sessionFactory.getCurrentSession();
 			Query<News> newsQuery = currentSession.createQuery("from News order by dateAdded DESC", News.class).setFirstResult(from*count).setMaxResults(count);
 			return newsQuery.getResultList();
 		}  catch (HibernateException e) {
-			throw new DaoException("Hibernate error", e);
+			throw new UserDaoException("Hibernate error", e);
 		}
 	}
 
 	@Override
-	public News findById(int id) throws DaoException {
+	public News findById(int id) throws UserDaoException {
 		try {
 			Session currentSession = sessionFactory.getCurrentSession();
 			News news = currentSession.get(News.class, id);
 			return news;
 		}  catch (HibernateException e) {
-			throw new DaoException("Hibernate error", e);
+			throw new UserDaoException("Hibernate error", e);
 		}
 	}
 
 	@Override
-	public Integer addNews(News news) throws DaoException {
+	public Integer addNews(News news) throws UserDaoException {
 		try {
 			Session currentSession = sessionFactory.getCurrentSession();
 			Integer savedId = (Integer) currentSession.save(news);
 			return savedId;
 		}  catch (HibernateException e) {
-			throw new DaoException("Hibernate error", e);
+			throw new UserDaoException("Hibernate error", e);
 		}
 	}
 
 	@Override
-	public void updateNews(News news) throws DaoException {
+	public void updateNews(News news) throws UserDaoException {
 		try {
 			Session currentSession = sessionFactory.getCurrentSession();
 			currentSession.update(news);
 		} catch (HibernateException e) {
-			throw new DaoException("Hibernate error", e);
+			throw new UserDaoException("Hibernate error", e);
 		}
 	}
 
 	@Override
-	public void deleteNews(int[] newsIds) throws DaoException {
+	public void deleteNews(int[] newsIds) throws UserDaoException {
 		try {
 			Session currentSession = sessionFactory.getCurrentSession();
 			List<Integer> newsIdsList = Arrays.stream(newsIds).boxed().collect(Collectors.toList());
@@ -89,18 +89,18 @@ public class NewsDAOImpl implements com.htp.springnewswebapp.dao.NewsDAO {
 					.setParameterList("newsIds",newsIdsList)
 					.executeUpdate();
 		} catch (HibernateException e) {
-			throw new DaoException("Hibernate error", e);
+			throw new UserDaoException("Hibernate error", e);
 		}
 	}
 
 	@Override
-	public int getTotalNewsAmount() throws DaoException {
+	public int getTotalNewsAmount() throws UserDaoException {
 		try {
 			Session currentSession = sessionFactory.getCurrentSession();
 
 			return (int)((long)currentSession.createQuery("select count(*) from News").getSingleResult());
 		} catch (HibernateException e) {
-			throw new DaoException("Hibernate error", e);
+			throw new UserDaoException("Hibernate error", e);
 		}
 	}
 }

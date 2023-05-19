@@ -1,13 +1,12 @@
 package com.htp.springnewswebapp.dao.impl;
 
 
-import com.htp.springnewswebapp.dao.DaoException;
+import com.htp.springnewswebapp.dao.UserDaoException;
 import com.htp.springnewswebapp.dao.UserDAO;
 import com.htp.springnewswebapp.entity.User;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.exception.SQLGrammarException;
 import org.hibernate.query.Query;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,7 @@ public class UserDAOImpl implements UserDAO {
 	}
 
 	@Override
-	public User signIn(User user) throws DaoException {
+	public User signIn(User user) throws UserDaoException {
 		try {
 			Session session = sessionFactory.getCurrentSession();
 			Query<User> query = session.createQuery("FROM User WHERE login = :login", User.class);
@@ -39,12 +38,12 @@ public class UserDAOImpl implements UserDAO {
 				return null;
 			}
 		} catch (HibernateException e) {
-			throw new DaoException(e);
+			throw new UserDaoException(e);
 		}
 	}
 
 	@Override
-	public boolean signUp(User user) throws DaoException {
+	public boolean signUp(User user) throws UserDaoException {
 		try {
 			Session session = sessionFactory.getCurrentSession();
 
@@ -61,7 +60,7 @@ public class UserDAOImpl implements UserDAO {
 			session.save(user);
 			return true;
 		} catch (HibernateException e) {
-			throw new DaoException(e);
+			throw new UserDaoException(e);
 		}
 	}
 

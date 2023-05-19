@@ -1,11 +1,10 @@
 package com.htp.springnewswebapp.service.impl;
 
 
-import com.htp.springnewswebapp.dao.DaoException;
+import com.htp.springnewswebapp.dao.UserDaoException;
 import com.htp.springnewswebapp.dao.NewsDAO;
 import com.htp.springnewswebapp.entity.News;
 import com.htp.springnewswebapp.entity.NewsStatus;
-import com.htp.springnewswebapp.entity.UserStatus;
 import com.htp.springnewswebapp.service.NewsService;
 import com.htp.springnewswebapp.service.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,7 @@ public class NewsServiceImpl implements NewsService {
 		}
 		try {
 			newsDAO.deleteNews(newsIds);
-		} catch (DaoException e) {
+		} catch (UserDaoException e) {
 			throw new ServiceException(e);
 		}
 	}
@@ -48,7 +47,7 @@ public class NewsServiceImpl implements NewsService {
 			news.setStatus(newsStatus);
 
 			newsDAO.addNews(news);
-		} catch (DaoException e) {
+		} catch (UserDaoException e) {
 			throw new ServiceException(e);
 		}
 
@@ -58,7 +57,7 @@ public class NewsServiceImpl implements NewsService {
 	public int getTotalNewsAmount() throws ServiceException {
 		try {
 			return newsDAO.getTotalNewsAmount();
-		} catch (DaoException e) {
+		} catch (UserDaoException e) {
 			throw new ServiceException(e);
 		}
 	}
@@ -67,7 +66,7 @@ public class NewsServiceImpl implements NewsService {
 	public void update(News news)  throws ServiceException{
 		try {
 			newsDAO.updateNews(news);
-		} catch (DaoException e) {
+		} catch (UserDaoException e) {
 			throw new ServiceException(e);
 		}
 		
@@ -85,7 +84,7 @@ public class NewsServiceImpl implements NewsService {
 		try {
 			return newsDAO.getCountNewsStartingFrom(count, from);
 
-		} catch (DaoException e) {
+		} catch (UserDaoException e) {
 			throw new ServiceException(e);
 		}
 	}
@@ -94,7 +93,7 @@ public class NewsServiceImpl implements NewsService {
 	public List<News> getAllNews() throws ServiceException {
 		try {
 			return newsDAO.getAllNews();
-		} catch (DaoException e) {
+		} catch (UserDaoException e) {
 			throw new ServiceException(e);
 		}
 	}
@@ -105,7 +104,7 @@ public class NewsServiceImpl implements NewsService {
 		news.setId(id);
 		try {
 			return newsDAO.findById(id);
-		} catch (DaoException e) {
+		} catch (UserDaoException e) {
 			throw new ServiceException(e);
 		}
 	}

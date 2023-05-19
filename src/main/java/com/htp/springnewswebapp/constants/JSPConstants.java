@@ -2,6 +2,18 @@ package com.htp.springnewswebapp.constants;
 
 public final class JSPConstants {
 
+    public static final String JSP_NEWS = "news";
+    public static final String AUTH_ERROR = "auth_error";
+    private static final String LOGIN = "login";
+    public static final String JSP_LOGIN_PARAM = "login";
+    public static final String JSP_PASSWORD_PARAM = "password";
+    public final static String JSP_COUNT_PARAM = "count";
+    public final static String JSP_PAGE_NUMBER_PARAM = "page";
+    public final static String JSP_FINAL_PAGE_NUMBER = "final_page_number";
+    public final static int DEFAULT_PAGE = 1;
+    public final static String DEFAULT_PAGE_STRING = "1";
+    public final static String DEFAULT_COUNT_STRING = "5";
+
     private JSPConstants(){}
 
 
