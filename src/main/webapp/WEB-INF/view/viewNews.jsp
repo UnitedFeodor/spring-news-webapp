@@ -2,6 +2,7 @@
 <%@ include file="/WEB-INF/view/localization/localizationBase.jsp" %>
 
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <div class="body-title">
 	<a href="/news/newslist">${goback_news}</a> ${viewnews_goback_current}
 </div>
@@ -38,7 +39,8 @@
 </div>
 
 
-<c:if test="${sessionScope.role eq 'admin'}">
+<sec:authorize access="hasAuthority('admin')">
+<%--<c:if test="${sessionScope.role eq 'admin'}">--%>
 	<div style="margin-left: 30px; margin-bottom: 10px">
 		<form action="/news/edit/${news.id}" method="get">
 			<input type="submit" value="${edit}" />
@@ -51,4 +53,5 @@
 			<input type="submit" value="${delete}" />
 		</form>
 	</div>
-</c:if>
+</sec:authorize>
+<%--</c:if>--%>

@@ -2,6 +2,8 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
 
 <%@ include file="/WEB-INF/view/localization/localizationBase.jsp" %>
 <%--
@@ -23,7 +25,8 @@
 			<a href="/news/language?local=ru"> ${header_ru} </a> <br /> <br />
 		</div>
 
-		<c:if test="${not (sessionScope.userActivity eq 'active')}">
+		<sec:authorize access="!isAuthenticated()">
+<%--		<c:if test="${not (sessionScope.userActivity eq 'active')}">--%>
 
 			<div align="right">
 				<form:form action="signin" modelAttribute="user" method="post">
@@ -55,9 +58,11 @@
 				</form:form>
 			</div>
 
-		</c:if>
-		
-		<c:if test="${sessionScope.userActivity eq 'active'}">
+<%--		</c:if>--%>
+		</sec:authorize>
+
+		<sec:authorize access="isAuthenticated()">
+<%--		<c:if test="${sessionScope.userActivity eq 'active'}">--%>
 
 			<div align="right">
 				<form action="/news/signout" method="post">
@@ -79,9 +84,8 @@
 
 			</div>
 
-
-
-		</c:if>
+		</sec:authorize>
+<%--		</c:if>--%>
 	</div>
 
 </div>

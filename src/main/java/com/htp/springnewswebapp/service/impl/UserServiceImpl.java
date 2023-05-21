@@ -7,12 +7,15 @@ import com.htp.springnewswebapp.entity.UserStatus;
 import com.htp.springnewswebapp.service.ServiceException;
 import com.htp.springnewswebapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.Collections;
 
 @Service
@@ -49,29 +52,60 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		}
 
 		// Build and return a UserDetails object based on the retrieved User entity.
-		return org.springframework.security.core.userdetails.User
-				.withUsername(user.getLogin())
-				.password(user.getPassword())
-				.authorities(user.getRole().getTitle())
-				.build();
+		return new UserRepositoryUserDetails(user);
 
 
 	}
 
-	@Transactional
-	@Override
-	public int getIdByLogin(String login) throws ServiceException {
-		// TODO change
-//		User userToValidate = new User();
-//		userToValidate.setLogin(login);
-//
-//		try {
-//			return userDAO.getIdByLogin(login);
-//		} catch (UserDaoException e) {
-//			throw new ServiceException(e);
-//		}
-		return 0;
+	public final static class UserRepositoryUserDetails implements UserDetails {
+
+		private final User user;
+		private UserRepositoryUserDetails(User user) {
+			this.user = user;
+		}
+
+		@Override
+		public Collection<? extends GrantedAuthority> getAuthorities() {
+			return AuthorityUtils.createAuthorityList(user.getRole().getTitle());
+		}
+
+		@Override
+		public String getPassword() {
+			return user.getPassword();
+		}
+
+		@Override
+		public String getUsername() {
+			return user.getLogin();
+		}
+
+		@Override
+		public boolean isAccountNonExpired() {
+			return true;
+		}
+
+		@Override
+		public boolean isAccountNonLocked() {
+			return true;
+		}
+
+		@Override
+		public boolean isCredentialsNonExpired() {
+			return true;
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return true;
+		}
+
+		public User getUser() {
+			return this.user;
+		}
+
+		private static final long serialVersionUID = 5639683223516504866L;
 	}
+
 
 	@Transactional
 	@Override

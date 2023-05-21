@@ -6,7 +6,9 @@ import com.htp.springnewswebapp.entity.*;
 import com.htp.springnewswebapp.service.NewsService;
 import com.htp.springnewswebapp.service.ServiceException;
 import com.htp.springnewswebapp.service.UserService;
+import com.htp.springnewswebapp.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -133,8 +135,9 @@ public class FrontController {
             @RequestParam(required = false, defaultValue = JSPConstants.DEFAULT_PAGE_STRING , value= JSPConstants.JSP_PAGE_NUMBER_PARAM) String pageParam,
             @RequestParam(required = false, defaultValue =  JSPConstants.DEFAULT_COUNT_STRING, value= JSPConstants.JSP_COUNT_PARAM) String countParam,
             HttpServletRequest request,
-            Model model) {
+            Model model, Authentication authentication) {
 
+        System.out.println(authentication.getAuthorities());
         List<News> newsList;
         try {
             int newsPage = Integer.parseInt(pageParam);
@@ -238,14 +241,15 @@ public class FrontController {
     @RequestMapping(value = "/add",method = RequestMethod.POST)
     public String addNews(
             @ModelAttribute("news") News news,
-            HttpServletRequest request) {
+            HttpServletRequest request,
+            Authentication authentication) {
 
         HttpSession session = request.getSession(false);
 
         try {
-            int userId = (int) session.getAttribute(UserConstants.USER_ID);
-            User author = new User();
-            author.setId(userId);
+//            int userId = (int) session.getAttribute(UserConstants.USER_ID);
+            User author = ((UserServiceImpl.UserRepositoryUserDetails)authentication.getPrincipal()).getUser();
+//            author.setId(userId);
 
             news.setAuthor(author);
 
@@ -288,11 +292,12 @@ public class FrontController {
     @RequestMapping(value = "/language", method = RequestMethod.GET)
     public String changeLanguage(
             @RequestParam(required = false, value= JSPConstants.LOCALE) String local,
-            HttpServletRequest request) {
+            HttpServletRequest request,
+            Authentication authentication) {
         HttpSession session = request.getSession(true);
         session.setAttribute(JSPConstants.LOCALE, local);
 
-        return UserConstants.USER_STATUS_ACTIVE.equals(session.getAttribute(UserConstants.USER_ACTIVITY))
+        return authentication.isAuthenticated()
                 ? "redirect:/newslist"
                 : "redirect:/home";
 

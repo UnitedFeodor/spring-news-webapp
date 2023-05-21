@@ -9,5 +9,4 @@ public interface UserService {
 	//boolean signOut(int id) throws ServiceException;
 	boolean signUp(User user) throws ServiceException;
 
-	int getIdByLogin(String login) throws ServiceException;
 }

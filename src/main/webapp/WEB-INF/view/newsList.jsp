@@ -4,6 +4,7 @@
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <div class="body-title">
 	<a href="newslist">${goback_news} </a> ${newslist_goback_current}
@@ -25,16 +26,19 @@
 				</div>
 				<div class="news-link-to-wrapper">
 					<div class="link-position">
-						<c:if test="${sessionScope.role eq 'admin'}">
+						<sec:authorize access="hasAuthority('admin')">
+<%--						<c:if test="${sessionScope.role eq 'admin'}">--%>
 						      <a href="edit/${news.id}">${edit} </a>
-						</c:if>
+<%--						</c:if>--%>
+						</sec:authorize>
 						<span>&nbsp&nbsp</span>
 						<a href="view/${news.id}">${newslist_view} </a>
-   					    
-   					    <c:if test="${sessionScope.role eq 'admin'}">
+
+						<sec:authorize access="hasAuthority('admin')">
+<%--   					    <c:if test="${sessionScope.role eq 'admin'}">--%>
    					         <input type="checkbox" name="id" value="${news.id}" />
-   					    </c:if>
-					</div>
+<%--   					    </c:if>--%>
+						</sec:authorize></div>
 				</div>
 
 			</div>
@@ -42,16 +46,19 @@
 
 	</c:forEach>
 
-    <c:if test="${(sessionScope.role eq 'admin') and (not (news eq null))}">
+	<sec:authorize access="hasAuthority('admin')">
+		<c:if test="${(not (news eq null))}">
+<%--    <c:if test="${(sessionScope.role eq 'admin') and (not (news eq null))}">--%>
         <div class="delete-button-position">
             <input type="submit" value="${delete}" />
         </div>
     </c:if>
+	</sec:authorize>
 
 	<div class="no-news">
 		<c:if test="${news eq null}">
-        ${nonews}
-	</c:if>
+        	${nonews}
+		</c:if>
 	</div>
 </form>
 
@@ -85,5 +92,9 @@
 	<c:if test="${not (requestScope.page eq requestScope.final_page_number) }">
 		<a href="newslist?page=${requestScope.page+1}"> &raquo;</a>
 	</c:if>
+
+<%--	<!-- Print authorities -->--%>
+<%--	<sec:authentication property="authorities" var="authAuthorities"/>--%>
+<%--	Authorities: ${authAuthorities}--%>
 
 </div>

@@ -4,7 +4,7 @@
 		 pageEncoding="ISO-8859-1"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 
 <%-- <%@include jsp directive here for localization vars import in a different file --%>
@@ -133,17 +133,20 @@
 
 		<div class="base-layout-wrapper">
 			<div class="menu">
-
-				<c:if test="${not (sessionScope.userActivity eq 'active')}">
+				<sec:authorize access="!isAuthenticated()">
+<%--				<c:if test="${not (sessionScope.userActivity eq 'active')}">--%>
 					<div style="align-content: center; padding: 20px">
 						<c:out value="${wrapper_welcome}"/>
 					</div>
-
+				</sec:authorize>
 					<%-- <c:import url=""></c:import> --%>
-				</c:if>
-				<c:if test="${sessionScope.userActivity eq 'active'}">
+<%--				</c:if>--%>
+
+				<sec:authorize access="isAuthenticated()">
+<%--				<c:if test="${sessionScope.userActivity eq 'active'}">--%>
 					<c:import url="/WEB-INF/view/menu.jsp" />
-				</c:if>
+<%--				</c:if>--%>
+				</sec:authorize>
 		</div>
 
 		<div class="content">
@@ -151,14 +154,20 @@
 					<c:when test="${not empty sessionScope.error_msg}">
 						<c:import url="/WEB-INF/view/error.jsp"/>
 					</c:when>
-					<c:when test="${not (sessionScope.userActivity eq 'active')}">
-						<c:import url="/WEB-INF/view/guestBody.jsp" />
-					</c:when>
-					<c:when test="${(sessionScope.userActivity eq 'active')}">
-						<c:import url="/WEB-INF/view/body.jsp" />
-					</c:when>
+<%--					<c:when test="${not (sessionScope.userActivity eq 'active')}">--%>
+<%--						<c:import url="/WEB-INF/view/guestBody.jsp" />--%>
+<%--					</c:when>--%>
+<%--					<c:when test="${(sessionScope.userActivity eq 'active')}">--%>
+<%--						<c:import url="/WEB-INF/view/body.jsp" />--%>
+<%--					</c:when>--%>
 				</c:choose>
 
+			<sec:authorize access="!isAuthenticated()">
+				<c:import url="/WEB-INF/view/guestBody.jsp" />
+			</sec:authorize>
+			<sec:authorize access="isAuthenticated()">
+				<c:import url="/WEB-INF/view/body.jsp" />
+			</sec:authorize>
 
 
 
