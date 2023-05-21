@@ -10,5 +10,5 @@ public interface UserDAO {
 	//boolean signOut(int id) throws UserDaoException;
 	boolean signUp(User user) throws UserDaoException;
 
-
+	User findByLogin(String login);
 }

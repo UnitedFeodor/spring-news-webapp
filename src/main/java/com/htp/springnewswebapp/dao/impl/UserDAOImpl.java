@@ -12,6 +12,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -22,6 +23,21 @@ public class UserDAOImpl implements UserDAO {
 	@Autowired
 	public UserDAOImpl(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
+	}
+
+	@SuppressWarnings("unchecked")
+	public User findByLogin(String login) {
+
+		List<User> users = sessionFactory.getCurrentSession()
+				.createQuery("from User where login=?")
+				.setParameter(0, login).list();
+
+		if (users.size() > 0) {
+			return users.get(0);
+		} else {
+			return null;
+		}
+
 	}
 
 	@Override

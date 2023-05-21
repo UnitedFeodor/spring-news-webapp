@@ -127,6 +127,7 @@ public class FrontController {
 
     }
 
+
     @RequestMapping(value = "/newslist", method = RequestMethod.GET)
     public String goToNewsList(
             @RequestParam(required = false, defaultValue = JSPConstants.DEFAULT_PAGE_STRING , value= JSPConstants.JSP_PAGE_NUMBER_PARAM) String pageParam,
