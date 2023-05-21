@@ -8,6 +8,7 @@ import com.htp.springnewswebapp.service.ServiceException;
 import com.htp.springnewswebapp.service.UserService;
 import com.htp.springnewswebapp.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -195,6 +196,7 @@ public class FrontController {
     }
 
     @RequestMapping(value = "/edit/{id}",method = RequestMethod.GET)
+    @PreAuthorize("hasAuthority('admin')")
     public String goToEditNews(
             @PathVariable int id,
             HttpServletRequest request,
@@ -214,6 +216,7 @@ public class FrontController {
     }
 
     @RequestMapping(value = "/edit/{id}",method = RequestMethod.POST)
+    @PreAuthorize("hasAuthority('admin')")
     public String editNews(
             @ModelAttribute("news") News news,
             HttpServletRequest request) {
@@ -232,6 +235,7 @@ public class FrontController {
     }
 
     @RequestMapping(value = "/add",method = RequestMethod.GET)
+    @PreAuthorize("hasAuthority('admin')")
     public String goToAddNews(HttpServletRequest request, Model model) {
         request.setAttribute(JSPConstants.PRESENTATION, JSPConstants.ADD_NEWS);
         return "baseLayout";
@@ -239,6 +243,7 @@ public class FrontController {
     }
 
     @RequestMapping(value = "/add",method = RequestMethod.POST)
+    @PreAuthorize("hasAuthority('admin')")
     public String addNews(
             @ModelAttribute("news") News news,
             HttpServletRequest request,
@@ -266,6 +271,7 @@ public class FrontController {
 
 
     @RequestMapping(value = "/deletenews",method = RequestMethod.POST)
+    @PreAuthorize("hasAuthority('admin')")
     public String deleteSeveralNews(
             @RequestParam("id")String[] newsIdsStringArr,
             HttpServletRequest request) {
@@ -297,7 +303,7 @@ public class FrontController {
         HttpSession session = request.getSession(true);
         session.setAttribute(JSPConstants.LOCALE, local);
 
-        return authentication.isAuthenticated()
+        return authentication != null && authentication.isAuthenticated()
                 ? "redirect:/newslist"
                 : "redirect:/home";
 
