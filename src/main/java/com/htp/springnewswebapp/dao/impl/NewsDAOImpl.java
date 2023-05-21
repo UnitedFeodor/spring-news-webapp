@@ -2,6 +2,7 @@ package com.htp.springnewswebapp.dao.impl;
 
 import com.htp.springnewswebapp.dao.UserDaoException;
 import com.htp.springnewswebapp.entity.News;
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -16,7 +17,6 @@ import java.util.stream.Collectors;
 
 @Repository
 public class NewsDAOImpl implements com.htp.springnewswebapp.dao.NewsDAO {
-
 	private final SessionFactory sessionFactory;
 
 	@Autowired
@@ -28,7 +28,10 @@ public class NewsDAOImpl implements com.htp.springnewswebapp.dao.NewsDAO {
 	public List<News> getAllNews() throws UserDaoException {
 		try {
 			Session currentSession = sessionFactory.getCurrentSession();
-			Query<News> newsQuery = currentSession.createQuery("from News order by dateAdded DESC", News.class);
+
+			Query<News> newsQuery = currentSession
+					.createQuery("FROM News n INNER JOIN FETCH n.author ORDER BY n.dateAdded DESC", News.class);
+
 			return newsQuery.getResultList();
 		}  catch (HibernateException e) {
 			throw new UserDaoException("Hibernate error", e);
@@ -40,7 +43,12 @@ public class NewsDAOImpl implements com.htp.springnewswebapp.dao.NewsDAO {
 	public List<News> getCountNewsStartingFrom(int count, int from) throws UserDaoException {
 		try {
 			Session currentSession = sessionFactory.getCurrentSession();
-			Query<News> newsQuery = currentSession.createQuery("from News order by dateAdded DESC", News.class).setFirstResult(from*count).setMaxResults(count);
+
+			Query<News> newsQuery = currentSession
+					.createQuery("FROM News n INNER JOIN FETCH n.author ORDER BY n.dateAdded DESC", News.class)
+					.setFirstResult(from*count)
+					.setMaxResults(count);
+
 			return newsQuery.getResultList();
 		}  catch (HibernateException e) {
 			throw new UserDaoException("Hibernate error", e);
@@ -51,7 +59,15 @@ public class NewsDAOImpl implements com.htp.springnewswebapp.dao.NewsDAO {
 	public News findById(int id) throws UserDaoException {
 		try {
 			Session currentSession = sessionFactory.getCurrentSession();
-			News news = currentSession.get(News.class, id);
+			News news = currentSession
+					.createQuery("SELECT n FROM News n INNER JOIN FETCH n.author WHERE n.id = :id", News.class)
+					.setParameter("id", id)
+					.uniqueResult();
+
+			if (news != null) {
+				Hibernate.initialize(news.getStatus());
+			}
+
 			return news;
 		}  catch (HibernateException e) {
 			throw new UserDaoException("Hibernate error", e);
@@ -62,8 +78,9 @@ public class NewsDAOImpl implements com.htp.springnewswebapp.dao.NewsDAO {
 	public Integer addNews(News news) throws UserDaoException {
 		try {
 			Session currentSession = sessionFactory.getCurrentSession();
-			Integer savedId = (Integer) currentSession.save(news);
-			return savedId;
+
+			return (Integer) currentSession
+					.save(news);
 		}  catch (HibernateException e) {
 			throw new UserDaoException("Hibernate error", e);
 		}
@@ -73,7 +90,9 @@ public class NewsDAOImpl implements com.htp.springnewswebapp.dao.NewsDAO {
 	public void updateNews(News news) throws UserDaoException {
 		try {
 			Session currentSession = sessionFactory.getCurrentSession();
+
 			currentSession.update(news);
+
 		} catch (HibernateException e) {
 			throw new UserDaoException("Hibernate error", e);
 		}
@@ -85,7 +104,8 @@ public class NewsDAOImpl implements com.htp.springnewswebapp.dao.NewsDAO {
 			Session currentSession = sessionFactory.getCurrentSession();
 			List<Integer> newsIdsList = Arrays.stream(newsIds).boxed().collect(Collectors.toList());
 
-			currentSession.createQuery("delete from News news where news.id in (:newsIds)")
+			currentSession
+					.createQuery("DELETE FROM News news WHERE news.id IN (:newsIds)")
 					.setParameterList("newsIds",newsIdsList)
 					.executeUpdate();
 		} catch (HibernateException e) {
@@ -98,7 +118,10 @@ public class NewsDAOImpl implements com.htp.springnewswebapp.dao.NewsDAO {
 		try {
 			Session currentSession = sessionFactory.getCurrentSession();
 
-			return (int)((long)currentSession.createQuery("select count(*) from News").getSingleResult());
+			return (int)((long)currentSession
+					.createQuery("SELECT count(*) FROM News")
+					.getSingleResult());
+
 		} catch (HibernateException e) {
 			throw new UserDaoException("Hibernate error", e);
 		}

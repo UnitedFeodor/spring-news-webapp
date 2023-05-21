@@ -23,7 +23,7 @@ public class UserDetails {
     @Column(name = "birthday")
     private LocalDate birthday;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "users_id")
     @ToString.Exclude

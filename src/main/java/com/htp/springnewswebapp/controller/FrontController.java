@@ -6,7 +6,6 @@ import com.htp.springnewswebapp.entity.*;
 import com.htp.springnewswebapp.service.NewsService;
 import com.htp.springnewswebapp.service.ServiceException;
 import com.htp.springnewswebapp.service.UserService;
-import com.htp.springnewswebapp.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -253,7 +252,7 @@ public class FrontController {
 
         try {
 //            int userId = (int) session.getAttribute(UserConstants.USER_ID);
-            User author = ((UserServiceImpl.UserRepositoryUserDetails)authentication.getPrincipal()).getUser();
+            User author = ((UserRepositoryUserDetails)authentication.getPrincipal()).getUser();
 //            author.setId(userId);
 
             news.setAuthor(author);

@@ -29,8 +29,9 @@ public class UserDAOImpl implements UserDAO {
 	public User findByLogin(String login) {
 
 		List<User> users = sessionFactory.getCurrentSession()
-				.createQuery("from User where login=?")
-				.setParameter(0, login).list();
+				.createQuery("SELECT DISTINCT u FROM User u INNER JOIN FETCH u.role WHERE u.login = :login")
+				.setParameter("login", login)
+				.list();
 
 		if (users.size() > 0) {
 			return users.get(0);
