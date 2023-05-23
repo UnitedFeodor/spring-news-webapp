@@ -51,35 +51,28 @@ public class FrontController {
     }
 
     @RequestMapping("/home")
-    public String goToHomePage(Model model) {
+    public String goToHomePage(Model model) throws ServiceException {
         List<News> latestNews;
-        try {
-            latestNews = newsService.getAllNews();
-            if (latestNews.size() > 0) {
-                model.addAttribute(JSPConstants.JSP_NEWS, latestNews);
-            }
-
-            return "baseLayout";
-        } catch (ServiceException e) {
-            return "error";
+        latestNews = newsService.getAllNews();
+        if (latestNews.size() > 0) {
+            model.addAttribute(JSPConstants.JSP_NEWS, latestNews);
         }
+
+        return "baseLayout";
 
     }
 
     @RequestMapping(value = "/signup", method = RequestMethod.GET)
-    public String goToRegistrationPage(HttpServletRequest request, Model model) {
+    public String goToRegistrationPage(HttpServletRequest request) {
         request.setAttribute(JSPConstants.PRESENTATION, JSPConstants.REGISTRATION);
         return "baseLayout";
     }
 
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
-    public String signUp(@ModelAttribute("user") User user, HttpServletRequest request, Model model) {
-        try {
-            userService.signUp(user);
-            return "redirect:/home";
-        } catch (ServiceException e) {
-            return "error";
-        }
+    public String signUp(@ModelAttribute("user") User user) throws ServiceException {
+        userService.signUp(user);
+        return "redirect:/home";
+
 
     }
 
@@ -96,35 +89,30 @@ public class FrontController {
     }
 
     @RequestMapping(value = "/signin", method = RequestMethod.POST)
-    public String signIn(HttpServletRequest request) {
-        // TODO creation in filter
-        HttpSession session = request.getSession(true);	// TODO add user cabinet to change details and see them
-        try {
-            String login;
-            String password;
-            login = request.getParameter(JSPConstants.JSP_LOGIN_PARAM);
-            password = request.getParameter(JSPConstants.JSP_PASSWORD_PARAM);
+    public String signIn(HttpServletRequest request) throws ServiceException {
+        HttpSession session = request.getSession(true);
+        String login;
+        String password;
+        login = request.getParameter(JSPConstants.JSP_LOGIN_PARAM);
+        password = request.getParameter(JSPConstants.JSP_PASSWORD_PARAM);
 
-            User user = new User();
-            user.setLogin(login);
-            user.setPassword(password);
-            user = userService.signIn(user);
+        User user = new User();
+        user.setLogin(login);
+        user.setPassword(password);
+        user = userService.signIn(user);
 
-            if (user != null) {
-                session.setAttribute(UserConstants.USER_ACTIVITY, UserConstants.USER_STATUS_ACTIVE);
-                session.setAttribute(UserConstants.USER_ROLE, user.getRole().getTitle());
-                session.setAttribute(UserConstants.USER_ID,user.getId());
+        if (user != null) {
+            session.setAttribute(UserConstants.USER_ACTIVITY, UserConstants.USER_STATUS_ACTIVE);
+            session.setAttribute(UserConstants.USER_ROLE, user.getRole().getTitle());
+            session.setAttribute(UserConstants.USER_ID,user.getId());
 
-                request.setAttribute(JSPConstants.PRESENTATION, JSPConstants.NEWS_LIST);
-                return "redirect:/newslist";
-            } else {
-                session.setAttribute(UserConstants.USER_ACTIVITY, UserConstants.USER_STATUS_NOT_ACTIVE);
-                session.setAttribute(JSPConstants.AUTH_ERROR, "wrong login or password");
+            request.setAttribute(JSPConstants.PRESENTATION, JSPConstants.NEWS_LIST);
+            return "redirect:/newslist";
+        } else {
+            session.setAttribute(UserConstants.USER_ACTIVITY, UserConstants.USER_STATUS_NOT_ACTIVE);
+            session.setAttribute(JSPConstants.AUTH_ERROR, "wrong login or password");
 
-                return "redirect:/home";
-            }
-        } catch (ServiceException e) {
-            return "error";
+            return "redirect:/home";
         }
 
     }
@@ -135,63 +123,49 @@ public class FrontController {
             @RequestParam(required = false, defaultValue = JSPConstants.DEFAULT_PAGE_STRING , value= JSPConstants.JSP_PAGE_NUMBER_PARAM) String pageParam,
             @RequestParam(required = false, defaultValue =  JSPConstants.DEFAULT_COUNT_STRING, value= JSPConstants.JSP_COUNT_PARAM) String countParam,
             HttpServletRequest request,
-            Model model, Authentication authentication) {
+            Model model) throws ServiceException {
 
-        System.out.println(authentication.getAuthorities());
+        handlePagination(pageParam, countParam, request, model);
+
+        request.setAttribute(JSPConstants.PRESENTATION, JSPConstants.NEWS_LIST);
+
+        return "baseLayout";
+
+    }
+
+    private void handlePagination(String pageParam, String countParam, HttpServletRequest request, Model model) throws ServiceException {
         List<News> newsList;
-        try {
-            int newsPage = Integer.parseInt(pageParam);
-            int newsCount = Integer.parseInt(countParam);
-            int totalNewsAmount = newsService.getTotalNewsAmount();
+        int newsPage = Integer.parseInt(pageParam);
+        int newsCount = Integer.parseInt(countParam);
+        int totalNewsAmount = newsService.getTotalNewsAmount();
 
-            if (totalNewsAmount < newsCount*newsPage) {
-                newsPage = JSPConstants.DEFAULT_PAGE;
-            }
-
-            newsList = newsService.getCountNewsStartingFrom(newsCount,newsPage-1);
-            if (newsList.size() > 0) {
-                model.addAttribute(JSPConstants.JSP_NEWS, newsList);
-            }
-
-            int finalPageNumber = totalNewsAmount % newsCount == 0 ? totalNewsAmount / newsCount : totalNewsAmount / newsCount + 1;
-
-            request.setAttribute(JSPConstants.JSP_FINAL_PAGE_NUMBER,finalPageNumber);
-            request.setAttribute(JSPConstants.JSP_PAGE_NUMBER_PARAM, newsPage);
-            request.setAttribute(JSPConstants.JSP_COUNT_PARAM, countParam);
-
-            request.setAttribute(JSPConstants.PRESENTATION, JSPConstants.NEWS_LIST);
-
-            return "baseLayout";
-
-        } catch (ServiceException e) {
-            HttpSession session = request.getSession(false);
-            session.setAttribute(JSPConstants.ERROR_MESSAGE,"cannot get the list of news");
-            return "error";
-        } catch (NumberFormatException e) {
-            HttpSession session = request.getSession(false);
-            session.setAttribute(JSPConstants.ERROR_MESSAGE,"invalid request parameters");
-            return "error";
+        if (totalNewsAmount < newsCount*newsPage) {
+            newsPage = JSPConstants.DEFAULT_PAGE;
         }
 
+        newsList = newsService.getCountNewsStartingFrom(newsCount,newsPage-1);
+        if (newsList.size() > 0) {
+            model.addAttribute(JSPConstants.JSP_NEWS, newsList);
+        }
+
+        int finalPageNumber = totalNewsAmount % newsCount == 0 ? totalNewsAmount / newsCount : totalNewsAmount / newsCount + 1;
+
+        request.setAttribute(JSPConstants.JSP_FINAL_PAGE_NUMBER,finalPageNumber);
+        request.setAttribute(JSPConstants.JSP_PAGE_NUMBER_PARAM, newsPage);
+        request.setAttribute(JSPConstants.JSP_COUNT_PARAM, countParam);
     }
 
     @RequestMapping(value = "/view/{id}",method = RequestMethod.GET)
     public String goToViewNews(
             @PathVariable int id,
             HttpServletRequest request,
-            Model model) {
-        try {
-            News news  = newsService.findById(id);
-            model.addAttribute(JSPConstants.NEWS, news);
-            request.setAttribute(JSPConstants.PRESENTATION, JSPConstants.VIEW_NEWS);
+            Model model) throws ServiceException {
+        News news  = newsService.findById(id);
+        model.addAttribute(JSPConstants.NEWS, news);
+        request.setAttribute(JSPConstants.PRESENTATION, JSPConstants.VIEW_NEWS);
 
-            return "baseLayout";
+        return "baseLayout";
 
-        } catch (ServiceException e) {
-            HttpSession session = request.getSession(false);
-            session.setAttribute(JSPConstants.ERROR_MESSAGE,"cannot find the news by id");
-            return "error";
-        }
     }
 
     @RequestMapping(value = "/edit/{id}",method = RequestMethod.GET)
@@ -199,43 +173,31 @@ public class FrontController {
     public String goToEditNews(
             @PathVariable int id,
             HttpServletRequest request,
-            Model model) {
-        try {
-            News news  = newsService.findById(id);
-            model.addAttribute(JSPConstants.NEWS, news);
-            request.setAttribute(JSPConstants.PRESENTATION, JSPConstants.EDIT_NEWS);
+            Model model) throws ServiceException {
+        News news  = newsService.findById(id);
+        model.addAttribute(JSPConstants.NEWS, news);
+        request.setAttribute(JSPConstants.PRESENTATION, JSPConstants.EDIT_NEWS);
 
-            return "baseLayout";
+        return "baseLayout";
 
-        } catch (ServiceException e) {
-            HttpSession session = request.getSession(false);
-            session.setAttribute(JSPConstants.ERROR_MESSAGE, "cannot find the news by id");
-            return "error";
-        }
     }
 
     @RequestMapping(value = "/edit/{id}",method = RequestMethod.POST)
     @PreAuthorize("hasAuthority('admin')")
     public String editNews(
             @ModelAttribute("news") News news,
-            HttpServletRequest request) {
+            HttpServletRequest request) throws ServiceException {
         HttpSession session = request.getSession(false);
-        try {
 
-            newsService.update(news);
-            session.setAttribute(JSPConstants.JSP_SAVE_SUCCESS, JSPConstants.SUC);
-            return "redirect:/newslist";
+        newsService.update(news);
+        session.setAttribute(JSPConstants.JSP_SAVE_SUCCESS, JSPConstants.SUC);
+        return "redirect:/newslist";
 
-        } catch (ServiceException e) {
-            session.setAttribute(JSPConstants.ERROR_MESSAGE, "edit error");
-            return "error";
-
-        }
     }
 
     @RequestMapping(value = "/add",method = RequestMethod.GET)
     @PreAuthorize("hasAuthority('admin')")
-    public String goToAddNews(HttpServletRequest request, Model model) {
+    public String goToAddNews(HttpServletRequest request) {
         request.setAttribute(JSPConstants.PRESENTATION, JSPConstants.ADD_NEWS);
         return "baseLayout";
 
@@ -246,26 +208,18 @@ public class FrontController {
     public String addNews(
             @ModelAttribute("news") News news,
             HttpServletRequest request,
-            Authentication authentication) {
+            Authentication authentication) throws ServiceException {
 
         HttpSession session = request.getSession(false);
 
-        try {
-//            int userId = (int) session.getAttribute(UserConstants.USER_ID);
-            User author = ((UserRepositoryUserDetails)authentication.getPrincipal()).getUser();
-//            author.setId(userId);
+        User author = ((UserRepositoryUserDetails)authentication.getPrincipal()).getUser();
 
-            news.setAuthor(author);
+        news.setAuthor(author);
 
-            newsService.add(news);
-            session.setAttribute(JSPConstants.JSP_SAVE_SUCCESS, JSPConstants.SUC);
-            return "redirect:/newslist";
+        newsService.add(news);
+        session.setAttribute(JSPConstants.JSP_SAVE_SUCCESS, JSPConstants.SUC);
+        return "redirect:/newslist";
 
-        } catch (ServiceException e) {
-            session.setAttribute(JSPConstants.ERROR_MESSAGE, "add error");
-            return "error";
-
-        }
     }
 
 
@@ -273,24 +227,17 @@ public class FrontController {
     @PreAuthorize("hasAuthority('admin')")
     public String deleteSeveralNews(
             @RequestParam("id")String[] newsIdsStringArr,
-            HttpServletRequest request) {
+            HttpServletRequest request) throws ServiceException {
         HttpSession session = request.getSession(false);
 
         int[] newsIds = Stream.of(newsIdsStringArr).mapToInt(Integer::parseInt).toArray();
         if (newsIds != null) {
-            try {
-                newsService.delete(newsIds);
-                session.setAttribute(JSPConstants.JSP_DELETE_SUCCESS,JSPConstants.SUC);
-                return "redirect:/newslist";
-            } catch (ServiceException e) {
-                session.setAttribute(JSPConstants.ERROR_MESSAGE,"delete error");
-                return "error";
-            }
+            newsService.delete(newsIds);
+            session.setAttribute(JSPConstants.JSP_DELETE_SUCCESS,JSPConstants.SUC);
+            return "redirect:/newslist";
 
         } else {
-            session.setAttribute(JSPConstants.ERROR_MESSAGE,"no news to delete selected");
-            return "error";
-
+            throw new IllegalArgumentException("no news to delete selected");
         }
     }
 
@@ -307,5 +254,11 @@ public class FrontController {
                 : "redirect:/home";
 
 
+    }
+
+    @ExceptionHandler(Exception.class)
+    public String handleException(Exception ex, Model model) {
+        model.addAttribute(JSPConstants.ERROR, ex.getMessage());
+        return "baseLayout";
     }
 }

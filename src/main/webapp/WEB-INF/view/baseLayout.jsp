@@ -151,7 +151,7 @@
 
 		<div class="content">
 				<c:choose>
-					<c:when test="${not empty sessionScope.error_msg}">
+					<c:when test="${not empty error}">
 						<c:import url="/WEB-INF/view/error.jsp"/>
 					</c:when>
 <%--					<c:when test="${not (sessionScope.userActivity eq 'active')}">--%>
